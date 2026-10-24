@@ -1,0 +1,10 @@
+.build/
+.derivedData/
+.DS_Store
+xcuserdata/
+*.xcuserstate
+
+.derivedData-device/
+ios/Boxing/Services/QwenDeveloperConfiguration.swift
+
+ios/Pods/

@@ -1,0 +1,519 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		36F663BFEC3C847E1A0D31AE /* fixtures.json in Resources */ = {isa = PBXBuildFile; fileRef = 3D6DB56270D9C250B431A696 /* fixtures.json */; };
+		541DBCBC5C2E8C0D1EB82504 /* RecognitionRuntimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22222E899863CCC6AD217597 /* RecognitionRuntimeTests.swift */; };
+		C6A7EAD3601EB9B21E767AFE /* libPods-Boxing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F7F17B168D24B2FFB17EAB5 /* libPods-Boxing.a */; };
+		F56E72383B4B62D9FE88DC2A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5981245540C0B449533B0BC2 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4F0912163772B540CFAD2F83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A00000000000000000000002;
+			remoteInfo = Boxing;
+		};
+		84A3256AEBC144A8B3B3F77D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B6F26D2D3E7B31538FF5C8E7 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F6CA8BFC88290AB33297A7C778E05B12;
+			remoteInfo = Subproject;
+		};
+		AD3833C6F7140D7B1ECFFD23 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B6F26D2D3E7B31538FF5C8E7 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 282C91A2CF2E6BCA0CAF42BEEB26C0F0;
+			remoteInfo = Subproject;
+		};
+		C23751D065179DFDDA0AA5FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B6F26D2D3E7B31538FF5C8E7 /* Pods.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A91F33C381320402930B3F5EBA52E783;
+			remoteInfo = "Pods-Boxing";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0F7F17B168D24B2FFB17EAB5 /* libPods-Boxing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Boxing.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		22222E899863CCC6AD217597 /* RecognitionRuntimeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecognitionRuntimeTests.swift; sourceTree = "<group>"; };
+		3D6DB56270D9C250B431A696 /* fixtures.json */ = {isa = PBXFileReference; includeInIndex = 1; name = fixtures.json; path = ../../research/boxmaxxing/port/pipeline/fixtures.json; sourceTree = "<group>"; };
+		5981245540C0B449533B0BC2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		61D15370A238192D99F02C01 /* Pods-Boxing.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Boxing.release.xcconfig"; path = "Target Support Files/Pods-Boxing/Pods-Boxing.release.xcconfig"; sourceTree = "<group>"; };
+		7185711B64A59E3E3F97F6D9 /* RecognitionRuntimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecognitionRuntimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00000000000000000000009 /* Boxing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxing.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6F26D2D3E7B31538FF5C8E7 /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
+		BC2D20E830EC4BBE3E87F252 /* Pods-Boxing.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Boxing.debug.xcconfig"; path = "Target Support Files/Pods-Boxing/Pods-Boxing.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A00000000000000000000004 /* Boxing */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			path = Boxing;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00000000000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6A7EAD3601EB9B21E767AFE /* libPods-Boxing.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB9D89D44A7E3CAA3F27224A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F56E72383B4B62D9FE88DC2A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1A99FAB52483575A9FC08F0A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0F7F17B168D24B2FFB17EAB5 /* libPods-Boxing.a */,
+				8F6D41EB603A4B97B0C8C69A /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8F6D41EB603A4B97B0C8C69A /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				5981245540C0B449533B0BC2 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000003 = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000004 /* Boxing */,
+				A00000000000000000000005 /* Products */,
+				CA71EE4A5EEE363B366345E8 /* Pods */,
+				1A99FAB52483575A9FC08F0A /* Frameworks */,
+				EC58D1AB59A489AF9DF073E4 /* RecognitionRuntimeTests */,
+				B6F26D2D3E7B31538FF5C8E7 /* Pods.xcodeproj */,
+			);
+			sourceTree = "<group>";
+		};
+		A00000000000000000000005 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000009 /* Boxing.app */,
+				7185711B64A59E3E3F97F6D9 /* RecognitionRuntimeTests.xctest */,
+				F5D8EDED449ACDBBFC30746B /* libPods-Boxing.a */,
+				D50EBA35CAC38CF89C4D2D4D /* TensorFlowLiteC.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CA71EE4A5EEE363B366345E8 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BC2D20E830EC4BBE3E87F252 /* Pods-Boxing.debug.xcconfig */,
+				61D15370A238192D99F02C01 /* Pods-Boxing.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		EC58D1AB59A489AF9DF073E4 /* RecognitionRuntimeTests */ = {
+			isa = PBXGroup;
+			children = (
+				22222E899863CCC6AD217597 /* RecognitionRuntimeTests.swift */,
+				3D6DB56270D9C250B431A696 /* fixtures.json */,
+			);
+			name = RecognitionRuntimeTests;
+			path = ../Tests/RecognitionRuntimeTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4A48DB334188886166A51FA3 /* RecognitionRuntimeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FE3FC3356443178A1CA0488E /* Build configuration list for PBXNativeTarget "RecognitionRuntimeTests" */;
+			buildPhases = (
+				24D5908E6C747A11A8175CBD /* Sources */,
+				BB9D89D44A7E3CAA3F27224A /* Frameworks */,
+				F445A82750574115823F2B52 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BCE843C3CFE14553E73A50B0 /* PBXTargetDependency */,
+			);
+			name = RecognitionRuntimeTests;
+			productName = RecognitionRuntimeTests;
+			productReference = 7185711B64A59E3E3F97F6D9 /* RecognitionRuntimeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A00000000000000000000002 /* Boxing */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000011 /* Build configuration list for PBXNativeTarget "Boxing" */;
+			buildPhases = (
+				A7ABF7DE758CCA8DEA995643 /* [CP] Check Pods Manifest.lock */,
+				A00000000000000000000006 /* Sources */,
+				A00000000000000000000007 /* Frameworks */,
+				A00000000000000000000008 /* Resources */,
+				C13B1012822DDEA387E7949D /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6086864F2800D76E88F37371 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A00000000000000000000004 /* Boxing */,
+			);
+			name = Boxing;
+			productName = Boxing;
+			productReference = A00000000000000000000009 /* Boxing.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					A00000000000000000000002 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = A00000000000000000000010 /* Build configuration list for PBXProject "Boxing" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A00000000000000000000003;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A00000000000000000000005 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A00000000000000000000005 /* Products */;
+					ProjectRef = B6F26D2D3E7B31538FF5C8E7 /* Pods.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				A00000000000000000000002 /* Boxing */,
+				4A48DB334188886166A51FA3 /* RecognitionRuntimeTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		D50EBA35CAC38CF89C4D2D4D /* TensorFlowLiteC.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = "wrapper.plug-in";
+			path = TensorFlowLiteC.bundle;
+			remoteRef = 84A3256AEBC144A8B3B3F77D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F5D8EDED449ACDBBFC30746B /* libPods-Boxing.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-Boxing.a";
+			remoteRef = AD3833C6F7140D7B1ECFFD23 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A00000000000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F445A82750574115823F2B52 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				36F663BFEC3C847E1A0D31AE /* fixtures.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A7ABF7DE758CCA8DEA995643 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Boxing-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C13B1012822DDEA387E7949D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Boxing/Pods-Boxing-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Boxing/Pods-Boxing-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Boxing/Pods-Boxing-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		24D5908E6C747A11A8175CBD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				541DBCBC5C2E8C0D1EB82504 /* RecognitionRuntimeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00000000000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6086864F2800D76E88F37371 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Pods-Boxing";
+			targetProxy = C23751D065179DFDDA0AA5FB /* PBXContainerItemProxy */;
+		};
+		BCE843C3CFE14553E73A50B0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Boxing;
+			target = A00000000000000000000002 /* Boxing */;
+			targetProxy = 4F0912163772B540CFAD2F83 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1A66E4F748065D9E6A61FE74 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = BG8YSU2SAM;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/XCFrameworkIntermediates/TensorFlowLiteC/Core",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boxing.prototype.recognitiontests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Boxing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Boxing";
+			};
+			name = Debug;
+		};
+		29F335AE2D6E1C7E80CEB93B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = BG8YSU2SAM;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/XCFrameworkIntermediates/TensorFlowLiteC/Core",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boxing.prototype.recognitiontests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Boxing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Boxing";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A00000000000000000000012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A00000000000000000000013 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		A00000000000000000000014 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC2D20E830EC4BBE3E87F252 /* Pods-Boxing.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BG8YSU2SAM;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BOX;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSCameraUsageDescription = "BOX uses the camera to preview and record your practice clips locally.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boxing.prototype;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A00000000000000000000015 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61D15370A238192D99F02C01 /* Pods-Boxing.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BG8YSU2SAM;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BOX;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSCameraUsageDescription = "BOX uses the camera to preview and record your practice clips locally.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.boxing.prototype;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00000000000000000000010 /* Build configuration list for PBXProject "Boxing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000000000000000000012 /* Debug */,
+				A00000000000000000000013 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00000000000000000000011 /* Build configuration list for PBXNativeTarget "Boxing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000000000000000000014 /* Debug */,
+				A00000000000000000000015 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FE3FC3356443178A1CA0488E /* Build configuration list for PBXNativeTarget "RecognitionRuntimeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				29F335AE2D6E1C7E80CEB93B /* Release */,
+				1A66E4F748065D9E6A61FE74 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A00000000000000000000001 /* Project object */;
+}
