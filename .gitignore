@@ -1,12 +1,23 @@
+# Generated builds and downloaded dependencies
 .build/
 .derivedData/
+.derivedData-device/
+DerivedData/
+build/
+ios/Pods/
+
+# Local Xcode and development-tool state
 .DS_Store
 xcuserdata/
 *.xcuserstate
+.swiftpm/
+.xcodebuildmcp/
 
-.derivedData-device/
+# Local credentials
 ios/Boxing/Services/QwenDeveloperConfiguration.swift
+.env
+.env.*
+!.env.example
 
-research/
-
-ios/Pods/
+# Downloaded research, decompiled apps, and investigation tools
+/research/

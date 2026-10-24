@@ -7,7 +7,7 @@ struct BoxMaxxingResponseBridgeTests {
     private let window = BoxMaxxingJudge.Window(tReadyMs: 4600, earlyGraceMs: 120, failMs: 1000, greenMs: 400, yellowMs: 300)
     private func sample(atMs: Double? = nil) throws -> BoxMaxxingKernel.Sample {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let data = try Data(contentsOf: root.appendingPathComponent("research/boxmaxxing/port/pipeline/fixtures.json"))
+        let data = try Data(contentsOf: root.appendingPathComponent("Tests/Fixtures/Recognition/pipeline/fixtures.json"))
         let fixture = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
         let outputs = try #require(fixture["outputs"] as? [[String: Any]])
         var output = outputs[100]

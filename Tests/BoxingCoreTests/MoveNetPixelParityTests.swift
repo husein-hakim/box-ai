@@ -13,7 +13,7 @@ struct MoveNetPixelParityTests {
     }
     @Test func pixelsAgreeByteForByteWithOriginalARM64MachineCode() throws {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let fixture = try JSONDecoder().decode(Fixture.self, from: Data(contentsOf: root.appendingPathComponent("research/boxmaxxing/port/camera/fixtures.json")))
+        let fixture = try JSONDecoder().decode(Fixture.self, from: Data(contentsOf: root.appendingPathComponent("Tests/Fixtures/Recognition/camera/fixtures.json")))
         for v in fixture.cases {
             let mapping = try MoveNetUprightMapping(rawCrop: .init(x: 0, y: 0, width: v.width, height: v.height), clockwiseDegrees: v.rotation)
             let frame = MoveNetYUVFrame(y: .init(bytes: v.y, rowStride: v.yStride, pixelStride: v.pixelStride),

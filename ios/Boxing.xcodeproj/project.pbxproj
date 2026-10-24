@@ -47,7 +47,7 @@
 /* Begin PBXFileReference section */
 		0F7F17B168D24B2FFB17EAB5 /* libPods-Boxing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Boxing.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		22222E899863CCC6AD217597 /* RecognitionRuntimeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecognitionRuntimeTests.swift; sourceTree = "<group>"; };
-		3D6DB56270D9C250B431A696 /* fixtures.json */ = {isa = PBXFileReference; includeInIndex = 1; name = fixtures.json; path = ../../research/boxmaxxing/port/pipeline/fixtures.json; sourceTree = "<group>"; };
+		3D6DB56270D9C250B431A696 /* fixtures.json */ = {isa = PBXFileReference; includeInIndex = 1; name = fixtures.json; path = ../../Tests/Fixtures/Recognition/pipeline/fixtures.json; sourceTree = "<group>"; };
 		5981245540C0B449533B0BC2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		61D15370A238192D99F02C01 /* Pods-Boxing.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Boxing.release.xcconfig"; path = "Target Support Files/Pods-Boxing/Pods-Boxing.release.xcconfig"; sourceTree = "<group>"; };
 		7185711B64A59E3E3F97F6D9 /* RecognitionRuntimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecognitionRuntimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };

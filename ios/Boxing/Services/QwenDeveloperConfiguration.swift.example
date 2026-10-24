@@ -1,0 +1,8 @@
+// Copy to QwenDeveloperConfiguration.swift for local development.
+// Keep provider credentials out of version control.
+enum QwenDeveloperConfiguration {
+    static let apiKey = ""
+    static let baseURL = ""
+    static let textModel = ""
+    static let visionModel = ""
+}

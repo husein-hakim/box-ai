@@ -10,7 +10,7 @@ struct BoxMaxxingTrackerTests {
     }
     @Test func normalizationTrackingAndMissingPointsAgreeWithRawInstructionReplay() throws {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let f = try JSONDecoder().decode(Fixtures.self, from: Data(contentsOf: root.appendingPathComponent("research/boxmaxxing/port/tracking/fixtures.json")))
+        let f = try JSONDecoder().decode(Fixtures.self, from: Data(contentsOf: root.appendingPathComponent("Tests/Fixtures/Recognition/tracking/fixtures.json")))
         for sequence in f.sessions {
             var tracker = BoxMaxxingTracker(configuration: f.configuration)
             for (input, expected) in zip(sequence.frames, sequence.expected) {

@@ -17,7 +17,7 @@ struct BoxMaxxingClassifierTests {
         print("BoxMaxxing embedded max logit error: \(model.embeddedParityError)")
     }
     @Test func logitsProbabilitiesAndClassAgreeWithJavaScriptReference() throws {
-        let fixture = try JSONDecoder().decode(Fixture.self, from: Data(contentsOf: root.appendingPathComponent("research/boxmaxxing/port/classifier/fixtures.json")))
+        let fixture = try JSONDecoder().decode(Fixture.self, from: Data(contentsOf: root.appendingPathComponent("Tests/Fixtures/Recognition/classifier/fixtures.json")))
         let model = try BoxMaxxingClassifier.bundled()
         for vector in fixture.vectors {
             let actual = try model.classify(vector.input.map(Float.init))

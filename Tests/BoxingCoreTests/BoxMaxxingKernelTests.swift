@@ -5,7 +5,7 @@ import Testing
 struct BoxMaxxingKernelTests {
     @Test func completeReferencePipelineAgreesAcrossNodeAndNativeJavaScriptCore() throws {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let data = try Data(contentsOf: root.appendingPathComponent("research/boxmaxxing/port/pipeline/fixtures.json"))
+        let data = try Data(contentsOf: root.appendingPathComponent("Tests/Fixtures/Recognition/pipeline/fixtures.json"))
         let fixture = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
         let inputs = try #require(fixture["inputs"] as? [[String: Any]])
         let expected = try #require(fixture["outputs"] as? [[String: Any]])
@@ -28,7 +28,7 @@ struct BoxMaxxingKernelTests {
     }
     @Test func responseStateMachineAgreesAcrossNativeAndReference() throws {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let data = try Data(contentsOf: root.appendingPathComponent("research/boxmaxxing/port/judge/step-fixtures.json"))
+        let data = try Data(contentsOf: root.appendingPathComponent("Tests/Fixtures/Recognition/judge/step-fixtures.json"))
         let fixture = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
         let cases = try #require(fixture["cases"] as? [[String: Any]])
         for sequence in cases {

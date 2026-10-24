@@ -13,7 +13,7 @@ struct BoxMaxxingJudgeParityTests {
     }
     @Test func judgmentsAgreeWithRawInstructionReplay() throws {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let f = try JSONDecoder().decode(Fixtures.self, from: Data(contentsOf: root.appendingPathComponent("research/boxmaxxing/port/judge/fixtures.json")))
+        let f = try JSONDecoder().decode(Fixtures.self, from: Data(contentsOf: root.appendingPathComponent("Tests/Fixtures/Recognition/judge/fixtures.json")))
         for v in f.timing {
             #expect(J.timing(window: v.window, onsetMs: v.onsetMs, peakMs: v.peakMs) == v.expected)
             #expect(J.padState(window: v.window, atMs: v.peakMs) == v.padState)

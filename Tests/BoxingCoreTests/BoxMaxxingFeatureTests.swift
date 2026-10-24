@@ -24,7 +24,7 @@ struct BoxMaxxingFeatureTests {
 
     private func fixture() throws -> Fixture {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let url = root.appendingPathComponent("research/boxmaxxing/port/features/fixtures.json")
+        let url = root.appendingPathComponent("Tests/Fixtures/Recognition/features/fixtures.json")
         return try JSONDecoder().decode(Fixture.self, from: Data(contentsOf: url))
     }
 
