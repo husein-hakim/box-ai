@@ -4,6 +4,7 @@ struct TodayView: View {
     let store: AppStore
     @Binding var sheet: AppSheet?
     @Binding var selectedTab: AppTab
+    @State private var buildingNext = false
 
     private var trainedDays: Set<Date> {
         Set(store.history.map { Calendar.current.startOfDay(for: $0.date) })
@@ -13,7 +14,7 @@ struct TodayView: View {
         let assignment = store.plan.first { Calendar.current.isDateInToday($0.date) }
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                TodayHeader { sheet = .settings }.boxEntrance()
+                TodayHeader(progression: store.progression, openProgress: { selectedTab = .progress }) { sheet = .settings }.boxEntrance()
                 WeekStrip(selectedDays: store.selectedDays, trainedDays: trainedDays) { sheet = .schedule }.boxEntrance(1)
                 if let pending = store.pendingSession {
                     Button { store.activeSession = pending } label: {
@@ -31,6 +32,13 @@ struct TodayView: View {
                         }
                     }
                 }.boxEntrance(2)
+                if store.nextWeekDue {
+                    Button { buildingNext = true } label: {
+                        BoxRow(symbol: "arrow.triangle.2.circlepath", color: BoxStyle.accent, title: String(localized: "Week done. Build next week"),
+                               subtitle: String(localized: "Adapts to what you finished and how it felt"))
+                            .boxPanel(padding: 0, tint: BoxStyle.accent)
+                    }.buttonStyle(BoxPressStyle()).boxEntrance(3)
+                }
                 TodayStats(store: store).boxEntrance(3)
                 TodayChecklist(store: store, assignment: assignment, selectedTab: $selectedTab).boxEntrance(4)
                 SessionShortcuts(store: store, build: { sheet = .builder }, coach: { sheet = .coach }).boxEntrance(5)
@@ -42,12 +50,15 @@ struct TodayView: View {
         }
         .boxScreen()
         .toolbar(.hidden, for: .navigationBar)
+        .sheet(isPresented: $buildingNext) { NavigationStack { ProgramBuilderView(store: store, nextWeek: true) }.preferredColorScheme(.dark).tint(BoxStyle.accent) }
     }
 }
 
 // MARK: - Header
 
 private struct TodayHeader: View {
+    let progression: ProgressionState
+    let openProgress: () -> Void
     let openProfile: () -> Void
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -59,6 +70,8 @@ private struct TodayHeader: View {
                     Text(Date.now, format: .dateTime.weekday(.wide).day().month(.wide)).boxEyebrow()
                 }
                 Spacer()
+                Button(action: openProgress) { LevelChip(state: progression) }
+                    .buttonStyle(BoxPressStyle()).accessibilityHint("Opens Progress")
                 GlassIconButton(symbol: "person.fill", label: "Profile and settings", action: openProfile)
                     .foregroundStyle(BoxStyle.ink)
             }

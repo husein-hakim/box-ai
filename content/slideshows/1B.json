@@ -1,0 +1,37 @@
+{
+  "id": "1B",
+  "caption": "your sparring partner hopes you don't see this #boxing #sparring #boxingtips #boxingtraining #boxer",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "sparring-dim-gym.jpg",
+      "needs": "two boxers sparring in dim gym, wide shot",
+      "text": "Here's exactly why you keep getting hit in sparring...",
+      "sub": "(Swipe right)",
+      "brightness": 0.85
+    },
+    {
+      "image": "sparring-headgear-gym.jpg",
+      "needs": "boxer slipping, motion blur",
+      "text": "Your head stays in the middle after you punch. Move it every time you throw.",
+      "brightness": 0.8
+    },
+    {
+      "image": "boxer-guard-by-bag.jpg",
+      "needs": "boxer in guard, side profile silhouette",
+      "text": "Your hands drop when you get tired. Gloves back to your cheekbones after every punch."
+    },
+    {
+      "image": "boxing-shoes-jumping.jpg",
+      "needs": "feet / boxing shoes on canvas",
+      "text": "You back up in a straight line. Step off to the side instead.",
+      "brightness": 0.8
+    },
+    {
+      "image": "fight-in-ring-bw.jpg",
+      "needs": "boxer staring across the ring, faceless/backlit",
+      "text": "You watch the gloves. Watch his chest, it moves first.",
+      "brightness": 0.88
+    }
+  ]
+}

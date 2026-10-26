@@ -36,13 +36,19 @@ struct SessionPlayer: View {
                         if controller.execution != nil { controller.skip(); saveCheckpoint() }
                         else if store.discardCheckpoint() { dismiss() }
                     }, checkpoint: saveCheckpoint,
-                    fallback: controller.execution == nil ? nil : { controller.continueGuided(); saveCheckpoint() })
+                    fallback: controller.execution == nil ? nil : { controller.continueGuided(); saveCheckpoint() },
+                    end: { controller.pause(); showStopConfirmation = true },
+                    later: {
+                        controller.pause(reason: "Saved here. Resume when you are ready.")
+                        saveCheckpoint()
+                        if store.pendingSession?.id == controller.launch.id { dismiss() }
+                    })
                 .id("\(controller.execution?.current?.id ?? "standalone"):\(controller.execution?.set ?? 0)")
             } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
                     if controller.execution != nil {
-                        GuidedPlayerContent(controller: controller, save: { saveRecord(feedback: $0) },
+                        GuidedPlayerContent(controller: controller, save: { saveRecord(feedback: $0, effort: $1) },
                                             discard: { if store.discardCheckpoint() { dismiss() } }, checkpoint: saveCheckpoint,
                                             stance: store.stance == "Southpaw" ? .southpaw : .orthodox,
                                             level: .suggested(experience: store.profile.experience),
@@ -62,6 +68,8 @@ struct SessionPlayer: View {
             }
             }
             .boxScreen()
+            .toolbar(arenaActive ? .hidden : .visible, for: .navigationBar)
+            .toolbar(arenaActive ? .hidden : .automatic, for: .bottomBar)
             .navigationTitle(controller.execution?.session.title ?? controller.pad?.configuration.title ?? "Guided rounds").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -129,6 +137,12 @@ struct SessionPlayer: View {
             controller.cleanUp()
             UIApplication.shared.isIdleTimerDisabled = false
         }
+    }
+
+    /// The full-screen camera arena owns its own HUD controls.
+    private var arenaActive: Bool {
+        guard savedRecord == nil, let pad = controller.pad else { return false }
+        return pad.phase != .briefing && pad.phase != .recap
     }
 
     private var sessionOverview: some View {
@@ -300,9 +314,9 @@ struct SessionPlayer: View {
         else { store.saveCheckpoint(launch: controller.launch, checkpoint: controller.checkpoint()) }
         checkpointTime = controller.activeSeconds
     }
-    private func saveRecord(feedback: String = "") {
+    private func saveRecord(feedback: String = "", effort: Int? = nil) {
         guard savedRecord == nil else { return }
-        let record = controller.record(feedback: feedback)
+        let record = controller.record(feedback: feedback, effort: effort)
         if store.record(record) { savedRecord = record; BoxHaptics.success() }
     }
 }
@@ -332,6 +346,8 @@ private struct SessionSavedContent: View {
                     }.fixedSize(horizontal: false, vertical: true).padding(.top, 14)
                 }
                 .boxHero(padding: 18).boxEntrance(1)
+                XPEarnedCard(store: store, sessionID: record.id).boxEntrance(2)
+                CoachDebriefCard(store: store, recordID: record.id).boxEntrance(2)
                 HStack(spacing: 10) {
                     BoxStatTile(label: "Streak", value: store.activityStreak().formatted(), unit: "days", symbol: "flame.fill", color: BoxStyle.strength)
                     BoxStatTile(label: "Last 7 days", value: store.activeDays().formatted(), unit: "active", symbol: "calendar", color: BoxStyle.accent)

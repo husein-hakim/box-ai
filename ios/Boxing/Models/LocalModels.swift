@@ -2,20 +2,20 @@ import Foundation
 import SwiftData
 
 @Model final class LocalPreferences {
-    @Attribute(.unique) var key: String
-    var days: [Int]
-    var voiceEnabled: Bool
-    var stance: String
-    var legacyImported: Bool
+    var key: String = ""
+    var days: [Int] = []
+    var voiceEnabled: Bool = false
+    var stance: String = ""
+    var legacyImported: Bool = false
     init() {
         key = "primary"; days = []; voiceEnabled = true; stance = "Not set"; legacyImported = false
     }
 }
 
 @Model final class SavedPractice {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var payload: Data
+    var id: UUID = UUID()
+    var date: Date = Date.now
+    var payload: Data = Data()
     init(_ record: SessionRecord) throws {
         id = record.id; date = record.date; payload = try JSONEncoder().encode(record)
     }
@@ -23,16 +23,16 @@ import SwiftData
 }
 
 @Model final class MealEntry {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var name: String
-    var serving: String
-    var calories: Double
-    var protein: Double
-    var carbs: Double
-    var fat: Double
-    var source: String
-    var assumptions: String
+    var id: UUID = UUID()
+    var date: Date = Date.now
+    var name: String = ""
+    var serving: String = ""
+    var calories: Double = 0
+    var protein: Double = 0
+    var carbs: Double = 0
+    var fat: Double = 0
+    var source: String = ""
+    var assumptions: String = ""
     init(id: UUID = UUID(), date: Date, draft: MealDraft) {
         self.id = id; self.date = date; name = draft.name; serving = draft.serving
         calories = draft.calories; protein = draft.protein; carbs = draft.carbs; fat = draft.fat
@@ -50,19 +50,19 @@ import SwiftData
 }
 
 @Model final class WaterEntry {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var millilitres: Int
+    var id: UUID = UUID()
+    var date: Date = Date.now
+    var millilitres: Int = 0
     init(date: Date, millilitres: Int) { id = UUID(); self.date = date; self.millilitres = millilitres }
 }
 
 @Model final class NutritionTargets {
-    @Attribute(.unique) var key: String
-    var calories: Double
-    var protein: Double
-    var carbs: Double
-    var fat: Double
-    var water: Int
+    var key: String = ""
+    var calories: Double = 0
+    var protein: Double = 0
+    var carbs: Double = 0
+    var fat: Double = 0
+    var water: Int = 0
     var proposalData: Data?
     var policyID: String?
     var acceptedAt: Date?
@@ -70,20 +70,20 @@ import SwiftData
 }
 
 @Model final class CoachMessage {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var role: String
-    var text: String
+    var id: UUID = UUID()
+    var date: Date = Date.now
+    var role: String = ""
+    var text: String = ""
     init(role: String, text: String) { id = UUID(); date = .now; self.role = role; self.text = text }
 }
 
 @Model final class LocalVideo {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var title: String
-    var filename: String
-    var kind: String
-    var notes: String
+    var id: UUID = UUID()
+    var date: Date = Date.now
+    var title: String = ""
+    var filename: String = ""
+    var kind: String = ""
+    var notes: String = ""
     var subjectCode: String = ""
     var setupCode: String = ""
     init(filename: String, title: String, kind: String) {
@@ -93,12 +93,12 @@ import SwiftData
 }
 
 @Model final class VideoMarker {
-    @Attribute(.unique) var id: UUID
-    var videoID: UUID
-    var startSeconds: Double
-    var endSeconds: Double
-    var action: String
-    var note: String
+    var id: UUID = UUID()
+    var videoID: UUID = UUID()
+    var startSeconds: Double = 0
+    var endSeconds: Double = 0
+    var action: String = ""
+    var note: String = ""
     init(videoID: UUID, start: Double, end: Double, action: String, note: String) {
         id = UUID(); self.videoID = videoID; startSeconds = start; endSeconds = end; self.action = action; self.note = note
     }
@@ -117,6 +117,35 @@ enum LocalDatabase {
             configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory, cloudKitDatabase: .none)
         }
         return try ModelContainer(for: schema, configurations: [configuration])
+    }
+
+    // MARK: iCloud
+
+    static let cloudContainerID = "iCloud.com.boxing.prototype"
+    enum SyncState: Equatable, Sendable { case on, off, signedOut, unavailable(String) }
+    private(set) nonisolated(unsafe) static var syncState: SyncState = .off
+    private static let syncKey = "sync.iCloud.enabled"
+    /// User preference; takes effect the next time the store opens (app launch).
+    static var syncEnabled: Bool {
+        get { UserDefaults.standard.object(forKey: syncKey) as? Bool ?? true }
+        set { UserDefaults.standard.set(newValue, forKey: syncKey) }
+    }
+
+    /// The app's store, mirrored to the user's private iCloud database when sync is on
+    /// and an iCloud account is available. Uses the same file as the local store, so
+    /// existing data is kept and uploaded. Falls back to local-only if CloudKit cannot start.
+    static func openForApp() throws -> ModelContainer {
+        guard syncEnabled else { syncState = .off; return try open() }
+        guard FileManager.default.ubiquityIdentityToken != nil else { syncState = .signedOut; return try open() }
+        do {
+            let configuration = ModelConfiguration(schema: schema, cloudKitDatabase: .private(cloudContainerID))
+            let container = try ModelContainer(for: schema, configurations: [configuration])
+            syncState = .on
+            return container
+        } catch {
+            syncState = .unavailable(error.localizedDescription)
+            return try open()
+        }
     }
 }
 

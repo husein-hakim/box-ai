@@ -1,0 +1,47 @@
+{
+  "voice": "am_michael",
+  "speed": 1.12,
+  "end": 27.0,
+  "lines": [
+    {
+      "t": 0.0,
+      "text": "Your opponent isn't faster than you."
+    },
+    {
+      "t": 2.0,
+      "text": "He just sees your punch before you throw it."
+    },
+    {
+      "t": 4.1,
+      "text": "Watch your right hand. Before it goes forward, it pulls back."
+    },
+    {
+      "t": 7.7,
+      "text": "That wind-up is the tell."
+    },
+    {
+      "t": 9.28,
+      "text": "So how do you hide it?"
+    },
+    {
+      "t": 10.58,
+      "text": "Throw from where your hand already is. No pull-back."
+    },
+    {
+      "t": 13.7,
+      "text": "Exhale, snap it out, and bring it back the same way."
+    },
+    {
+      "t": 16.7,
+      "text": "Hide the start, and every punch looks faster, without being faster."
+    },
+    {
+      "t": 20.7,
+      "text": "Drill it. Have someone call a number, and fire straight from your guard."
+    },
+    {
+      "t": 24.45,
+      "text": "Who has the fastest hands ever?"
+    }
+  ]
+}

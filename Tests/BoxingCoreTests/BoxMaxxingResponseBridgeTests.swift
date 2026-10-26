@@ -65,4 +65,16 @@ struct BoxMaxxingResponseBridgeTests {
         _ = try bridge.close(atMs: 4800)
         #expect(try bridge.summary().aborted == 1)
     }
+    /// The live worker holds back one unscorable frame and observes it together
+    /// with the next good frame, both delivered at the same instant.
+    @Test func deferredFrameIsJudgedWithTheNextFrameWithoutError() throws {
+        let bridge = BoxMaxxingResponseBridge(kernel: try .init())
+        let (token, _) = try bridge.open(step, atMs: 4600, generation: 7)
+        #expect(try bridge.presented(token, window: window))
+        let held = try bridge.observe(sample(), captureMs: 5000, deliveredMs: 5050, generation: 7, timingReliable: true)
+        _ = try bridge.observe(sample(atMs: 5040), captureMs: 5040, deliveredMs: 5050, generation: 7, timingReliable: true)
+        _ = try bridge.tick(atMs: 5050)
+        guard case let .judged(events) = held else { Issue.record("Expected the held frame to be judged"); return }
+        #expect(events.contains { $0.kind == "rep_ok" })
+    }
 }

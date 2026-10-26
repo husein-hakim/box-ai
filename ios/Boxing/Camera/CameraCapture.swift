@@ -16,15 +16,27 @@ final class CaptureEngine: NSObject, AVCaptureFileOutputRecordingDelegate, @unch
     private let frameAdapter: MoveNetFrameAdapter?
     private var frameRotation: Int?
     private var framesEnabled = false
+    /// Live recognition locks the device's own measured rotation (sensor mounting
+    /// differs by camera and iPhone model, so it is never hard-coded) and only
+    /// accepts a different quarter turn once it has held for `rotationHoldSeconds`.
+    /// A propped or briefly flat phone therefore cannot flip the source,
+    /// reset calibration or cancel the active cue.
+    private let stabilizeFrameRotation: Bool
+    private let rotationHoldSeconds = 3.0
+    private var pendingQuarter: Int?
+    private var pendingSince = 0.0
 
-    init(frameAdapter: MoveNetFrameAdapter? = nil) {
+    init(frameAdapter: MoveNetFrameAdapter? = nil, stabilizeFrameRotation: Bool = false) {
         self.frameAdapter = frameAdapter
+        self.stabilizeFrameRotation = stabilizeFrameRotation
         super.init()
     }
 
+    private var measuredQuarter: Int { ((Int((Double(captureAngle) / 90).rounded()) * 90) % 360 + 360) % 360 }
+
     private func configureFrames(enabled: Bool) throws {
         guard let frameAdapter else { return }
-        let quarter = ((Int((Double(captureAngle) / 90).rounded()) * 90) % 360 + 360) % 360
+        let quarter = stabilizeFrameRotation ? (frameRotation ?? measuredQuarter) : measuredQuarter
         guard framesEnabled != enabled || frameRotation != quarter else { return }
         try frameAdapter.configure(enabled: enabled, clockwiseDegrees: quarter)
         framesEnabled = enabled; frameRotation = quarter
@@ -56,12 +68,22 @@ final class CaptureEngine: NSObject, AVCaptureFileOutputRecordingDelegate, @unch
                         }
                         self.configured = true
                     }
+                    // Re-measure on every start; the lock only holds within a run.
+                    if self.stabilizeFrameRotation && !self.framesEnabled { self.frameRotation = nil; self.pendingQuarter = nil }
                     try self.configureFrames(enabled: true)
                     if !self.session.isRunning { self.session.startRunning() }
                     guard self.session.isRunning else { throw CaptureError.noCamera }
                     continuation.resume()
                 } catch { continuation.resume(throwing: error) }
             }
+        }
+    }
+    /// Bumps the recognition generation so the worker rebuilds its kernel and
+    /// judge state, without touching the capture session or preview.
+    func restartRecognition() {
+        queue.async {
+            guard let frameAdapter = self.frameAdapter, self.framesEnabled, let rotation = self.frameRotation else { return }
+            try? frameAdapter.configure(enabled: true, clockwiseDegrees: rotation)
         }
     }
     func record(completion: @escaping @Sendable (URL?, String?) -> Void) {
@@ -76,9 +98,26 @@ final class CaptureEngine: NSObject, AVCaptureFileOutputRecordingDelegate, @unch
     private func updateCaptureAngle(_ angle: CGFloat) {
         queue.async {
             self.captureAngle = angle
-            try? self.configureFrames(enabled: self.framesEnabled)
+            if self.stabilizeFrameRotation, let locked = self.frameRotation {
+                let candidate = self.measuredQuarter
+                if candidate == locked { self.pendingQuarter = nil }
+                else if self.pendingQuarter != candidate {
+                    self.pendingQuarter = candidate; self.pendingSince = ProcessInfo.processInfo.systemUptime
+                    self.queue.asyncAfter(deadline: .now() + self.rotationHoldSeconds + 0.05) { self.applyPendingRotation() }
+                }
+            } else {
+                try? self.configureFrames(enabled: self.framesEnabled)
+            }
             if !self.output.isRecording { self.applyCaptureAngle() }
         }
+    }
+    private func applyPendingRotation() {
+        guard let pending = pendingQuarter, pending == measuredQuarter,
+              ProcessInfo.processInfo.systemUptime - pendingSince >= rotationHoldSeconds,
+              let frameAdapter, framesEnabled else { return }
+        pendingQuarter = nil
+        guard (try? frameAdapter.configure(enabled: true, clockwiseDegrees: pending)) != nil else { return }
+        frameRotation = pending
     }
     private func applyCaptureAngle() {
         guard let connection = output.connection(with: .video), connection.isVideoRotationAngleSupported(captureAngle) else { return }

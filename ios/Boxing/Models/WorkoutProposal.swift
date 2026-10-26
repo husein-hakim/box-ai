@@ -13,11 +13,11 @@ struct WorkoutProposal: Codable, Sendable {
 }
 
 @Model final class SavedWorkoutPlan {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var title: String
-    var routineIDs: [String]
-    var reason: String
+    var id: UUID = UUID()
+    var date: Date = Date.now
+    var title: String = ""
+    var routineIDs: [String] = []
+    var reason: String = ""
     init(_ proposal: WorkoutProposal) { id = UUID(); date = .now; title = proposal.title; routineIDs = proposal.routineIDs; reason = proposal.reason }
 }
 

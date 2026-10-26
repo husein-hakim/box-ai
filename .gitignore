@@ -21,3 +21,8 @@ ios/Boxing/Services/QwenDeveloperConfiguration.swift
 
 # Downloaded research, decompiled apps, and investigation tools
 /research/
+
+# Content tooling output
+/content/out/
+/content/tools/node_modules/
+/content/tools/.venv/

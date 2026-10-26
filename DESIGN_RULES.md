@@ -27,5 +27,5 @@ Disabled primary buttons use neutral charcoal with muted text and a subtle neutr
 - Record/import belongs in Review. Developer camera diagnostics belong in Profile & settings → Advanced. Do not remove the actual training camera entry.
 - Liquid Glass belongs on floating utility controls and native navigation/toolbar surfaces, never every card. Use solid charcoal for reading and editable content, with an opaque Reduce Transparency fallback.
 - Spring press scale is small (0.97; 0.9 for round icon buttons) and brief. Header entrances and changing totals are subtle. Respect Reduce Motion. Haptics mark deliberate presses, selections and successful saves; do not vibrate per recognition frame or animate camera targets decoratively.
-- Show real records only. Never add fictional XP, leaderboards, nutrition grades, technique ratings or placeholder demonstrations for visual effect.
+- Show real records only. XP, levels, ranks and awards are derived from saved records (`Progression.compute`), never stored as a balance or granted for visual effect; every award has a stable ID so nothing counts twice. Never add fictional XP, bot leaderboards, nutrition grades, technique ratings or placeholder demonstrations for visual effect.
 - A successful compile is not visual, accessibility, haptic or performance evidence. Record the exact device checks still needed.

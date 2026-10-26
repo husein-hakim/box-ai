@@ -1,0 +1,33 @@
+{
+  "id": "5A",
+  "caption": "your coach has told you this 100 times #boxing #boxingtips #guard #boxingtraining #sparring",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "hoodie-sitting-blur-gym.jpg",
+      "needs": "tired boxer leaning on ropes, from behind",
+      "text": "Here's exactly why your hands drop in later rounds...",
+      "sub": "(Swipe right)"
+    },
+    {
+      "image": "ring-gloves-gear-bw.jpg",
+      "needs": "boxer holding guard, sweat, close",
+      "text": "Your shoulders can't hold a guard for 3 minutes. Train it: hold your guard for full rounds."
+    },
+    {
+      "image": "wrapping-hands-closeup.jpg",
+      "needs": "gloved hands relaxed at rest",
+      "text": "Your arms are tense. Tense arms burn out your shoulders fast."
+    },
+    {
+      "image": "empty-ring-dark-gym.jpg",
+      "needs": "two boxers drilling, gym",
+      "text": "Nobody punishes it in training. Have your partner tap your head every time it drops."
+    },
+    {
+      "image": "bag-gloves-hanging-dark.jpg",
+      "needs": "boxer exhausted on floor of gym",
+      "text": "You only drill defense when you're fresh. Do it at the end of the session, tired."
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 import SwiftUI
 
 private enum LibraryFilter: String, CaseIterable {
-    case all = "All", foundation = "Foundation", camera = "Camera", strength = "Strength", conditioning = "Conditioning", core = "Core", mobility = "Mobility"
+    case all = "All", punches = "Punches", defense = "Defense", combos = "Combos", footwork = "Footwork", camera = "Camera"
+    case foundation = "Foundation", strength = "Strength", conditioning = "Conditioning", core = "Core", mobility = "Mobility"
 }
 
 struct ActivityLibraryView: View {
@@ -10,7 +11,7 @@ struct ActivityLibraryView: View {
     @State private var query = ""
     @State private var filter: LibraryFilter = .all
     @State private var visible: [CatalogActivity] = []
-    private var filters: [LibraryFilter] { boxingOnly ? [.all, .foundation, .camera] : [.all, .strength, .conditioning, .core, .mobility] }
+    private var filters: [LibraryFilter] { boxingOnly ? [.all, .punches, .defense, .combos, .footwork, .camera] : [.all, .strength, .conditioning, .core, .mobility] }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
@@ -62,6 +63,7 @@ struct ActivityLibraryView: View {
             switch filter {
             case .all: matches = true
             case .foundation: matches = activity.difficulty == .beginner
+            case .punches, .defense, .combos, .footwork: matches = activity.drillCategory == filter.rawValue
             case .camera: matches = CameraPlanningCapability.supports(activity.id)
             case .strength: matches = activity.kind == .strength
             case .conditioning: matches = activity.kind == .conditioning

@@ -1,0 +1,33 @@
+{
+  "id": "5B",
+  "caption": "no gym? no excuse. save this \ud83e\udd4a #boxing #homeworkout #boxingcardio #jumprope #boxingtraining",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "jumprope-street-night.jpg",
+      "needs": "jump rope on floor of small home gym / garage at night",
+      "text": "How to build boxing cardio at home...",
+      "sub": "(Step by step)"
+    },
+    {
+      "image": "jumprope-backlit-doorway-bw.jpg",
+      "needs": "jump rope mid-swing, garage",
+      "text": "Jump rope: 3 rounds of 3 minutes, 1 minute rest."
+    },
+    {
+      "image": "garage-gym-bag-dark.jpg",
+      "needs": "shadow of boxer on wall",
+      "text": "Shadowbox 3 rounds: jab only, then combos, then nonstop."
+    },
+    {
+      "image": "heavy-bag-hallway.jpg",
+      "needs": "fast punches motion blur",
+      "text": "30 seconds fast punches, 30 seconds slow. Repeat for a full round."
+    },
+    {
+      "image": "pullup-bar-field-dusk.jpg",
+      "needs": "person doing plank in dim room",
+      "text": "Finish with core: plank and sit-ups, 3 rounds."
+    }
+  ]
+}

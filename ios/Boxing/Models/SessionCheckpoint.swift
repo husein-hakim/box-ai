@@ -13,11 +13,11 @@ struct SessionCheckpoint: Codable {
 }
 
 @Model final class SavedSessionDraft {
-    @Attribute(.unique) var key: String
-    var sessionID: UUID
-    var focusRaw: String
-    var configuration: Data
-    var checkpoint: Data
+    var key: String = ""
+    var sessionID: UUID = UUID()
+    var focusRaw: String = ""
+    var configuration: Data = Data()
+    var checkpoint: Data = Data()
     var executionData: Data?
     var padData: Data?
     var assignmentID: UUID?

@@ -16,14 +16,15 @@ struct PadPoint: Codable, Equatable, Sendable {
     var length: Double { hypot(x, y) }
 }
 
-/// One transform: full upright source, aspect fit, front-camera mirror exactly
-/// once. Preview frame, joints, targets and target-distance math all use it.
+/// One transform: full upright source, aspect FILL (edge-to-edge camera),
+/// front-camera mirror exactly once. Preview frame, joints, targets and
+/// target-distance math all use it; anything outside the viewport is off-screen.
 struct PadCameraTransform {
     let image: CGSize
     let viewport: CGSize
     var imageRect: CGRect {
         guard image.width > 0, image.height > 0 else { return .zero }
-        let scale = min(viewport.width / image.width, viewport.height / image.height)
+        let scale = max(viewport.width / image.width, viewport.height / image.height)
         let size = CGSize(width: image.width * scale, height: image.height * scale)
         return CGRect(x: (viewport.width - size.width) / 2, y: (viewport.height - size.height) / 2, width: size.width, height: size.height)
     }
@@ -38,10 +39,35 @@ struct PadCameraTransform {
     }
     static func metric(_ source: PadPoint, aspect: Double) -> PadPoint { .init(x: source.x * aspect, y: source.y) }
     static func source(_ metric: PadPoint, aspect: Double) -> PadPoint { .init(x: metric.x / aspect, y: metric.y) }
+    /// The whole aim region is on screen with a small margin.
+    func isVisible(_ target: PadTargetDefinition, margin: CGFloat = 8) -> Bool {
+        CGRect(origin: .zero, size: viewport).insetBy(dx: margin, dy: margin).contains(region(target))
+    }
     func region(_ target: PadTargetDefinition) -> CGRect {
         let centre = screen(target.centre)
         let radius = target.radius * imageRect.height
         return .init(x: centre.x - radius, y: centre.y - radius, width: radius * 2, height: radius * 2)
+    }
+}
+
+/// The fighter aims with the knuckles, but pose models report the wrist joint.
+/// Extend the wrist along the forearm to estimate the fist's centre. Used for
+/// reach capture, displayed pads and judging alike, so all three agree.
+enum PadFist {
+    static let forearmExtension = 0.3
+    static func point(wrist: PadPoint?, elbow: PadPoint?, aspect: Double) -> PadPoint? {
+        guard let wrist else { return nil }
+        guard let elbow, aspect > 0 else { return wrist }
+        let w = PadCameraTransform.metric(wrist, aspect: aspect), e = PadCameraTransform.metric(elbow, aspect: aspect)
+        return PadCameraTransform.source(w + (w - e) * forearmExtension, aspect: aspect)
+    }
+    /// Copy of a 17-point pose with both wrists replaced by fist estimates.
+    static func aimPoints(_ points: [PadPoint?], aspect: Double) -> [PadPoint?] {
+        guard points.count == 17 else { return points }
+        var result = points
+        result[9] = point(wrist: points[9], elbow: points[7], aspect: aspect)
+        result[10] = point(wrist: points[10], elbow: points[8], aspect: aspect)
+        return result
     }
 }
 
@@ -125,7 +151,6 @@ enum PadTargetJudge {
         }
         guard let peakMs, peakMs >= onsetMs else { return uncertain("missing_recognition_peak") }
         let nearby = samples.filter { $0.tMs >= onsetMs && abs($0.tMs - peakMs) <= 220 }
-        guard nearby.count >= 2 else { return uncertain("sparse_peak_trajectory") }
         var closest: PadPoint?
         var best = Double.infinity
         for (a, b) in zip(nearby, nearby.dropFirst()) {
@@ -145,7 +170,21 @@ enum PadTargetJudge {
             let distance = (point - centre).length
             if distance < best { best = distance; closest = PadCameraTransform.source(point, aspect: target.body.aspect) }
         }
-        guard let closest else { return uncertain("unreliable_peak_trajectory_or_alignment") }
+        if closest == nil {
+            // Fewer than two bracketing frames survive when the fist points at
+            // the camera. One reliable, aligned sample close to the peak is
+            // still direct evidence of where the punch landed.
+            let centre = PadCameraTransform.metric(target.centre, aspect: target.body.aspect)
+            let single = samples.filter { sample in
+                guard sample.reliable, sample.wrist != nil, sample.tMs >= onsetMs, abs(sample.tMs - peakMs) <= 150, let body = sample.body else { return false }
+                return target.body.compatible(with: body, scaleTolerance: 0.35) && (body.centre - target.body.centre).length <= target.body.scale * 0.7
+            }.min { abs($0.tMs - peakMs) < abs($1.tMs - peakMs) }
+            if let single, let wrist = single.wrist {
+                best = (PadCameraTransform.metric(wrist, aspect: target.body.aspect) - centre).length
+                closest = wrist
+            }
+        }
+        guard let closest else { return uncertain(nearby.count < 2 ? "sparse_peak_trajectory" : "unreliable_peak_trajectory_or_alignment") }
         return .init(outcome: best <= target.radius ? .reached : .missed, target: target, closestWrist: closest, peakMs: peakMs, reason: nil)
     }
 }
@@ -170,6 +209,16 @@ struct PadReachCalibration {
     private var reaches: [BoxMaxxingJudge.Hand: Reach] = [:]
     private var samples: [PadReachPose] = []
     private var stageStarted = 0.0
+    private var lastSampleMs = 0.0
+    // Hold times for the hands-free capture. Short enough to keep a fighter in
+    // stance, long enough to average a steady pose (three or more samples).
+    static let guardHoldMs = 700.0
+    static let reachHoldMs = 1500.0
+    static let reachTimeoutMs = 7000.0
+    static let returnHoldMs = 500.0
+    /// Shoulder-width units below the shoulder line, with a small safety margin
+    /// inside the recognizer's 0.5 straight-punch limit.
+    static let headZoneLowerLimit = 0.42
     let stance: BoxMaxxingJudge.Stance
     let hands: [BoxMaxxingJudge.Hand]
     init(stance: BoxMaxxingJudge.Stance, hands: [BoxMaxxingJudge.Hand]) {
@@ -177,13 +226,13 @@ struct PadReachCalibration {
     }
     var instruction: String {
         switch stage {
-        case .idle: notice ?? "Calibrate comfortable reach before target-accuracy practice."
-        case .guardPose: "Hold your normal guard, with both shoulders and arms visible."
-        case .leadReach: "Slowly extend a comfortable jab and hold briefly. Keep the elbow soft."
-        case .rearReach: "Slowly extend a comfortable cross and hold briefly. Keep the elbow soft."
-        case .leadReturn, .finalReturn: "Return both hands to your normal guard and hold briefly."
-        case .ready: "Reach calibrated. Targets follow your guard position between cues."
-        case .failed: notice ?? "Reach capture was unclear. Return to guard and recalibrate."
+        case .idle: notice ?? "Get in your guard to start."
+        case .guardPose: "Hold your guard."
+        case .leadReach: "Extend your jab and hold."
+        case .rearReach: "Extend your cross and hold."
+        case .leadReturn, .finalReturn: "Back to guard."
+        case .ready: "Locked in. Hit the pads."
+        case .failed: notice ?? "Didn’t catch that. Back to guard—we’ll go again."
         }
     }
     mutating func reset(_ message: String? = nil) {
@@ -195,7 +244,31 @@ struct PadReachCalibration {
     func wristIndex(_ hand: BoxMaxxingJudge.Hand) -> Int {
         BoxMaxxingJudge.limbs(hand: hand, stance: stance).first == .left ? 9 : 10
     }
+    /// 0…1 through the current timed hold, for a filling progress ring.
+    var progress: Double {
+        let elapsed = max(0, lastSampleMs - stageStarted)
+        switch stage {
+        case .guardPose: return min(1, elapsed / Self.guardHoldMs)
+        case .leadReach, .rearReach: return min(1, elapsed / Self.reachHoldMs)
+        case .leadReturn, .finalReturn: return min(1, elapsed / Self.returnHoldMs)
+        case .ready: return 1
+        default: return 0
+        }
+    }
+    /// 1-based step of the capture sequence and the number of steps.
+    var step: (current: Int, total: Int) {
+        let both = hands.count > 1
+        switch stage {
+        case .guardPose: return (1, both ? 4 : 2)
+        case .leadReach: return (2, both ? 4 : 2)
+        case .leadReturn: return (3, 4)
+        case .rearReach: return (both ? 4 : 2, both ? 4 : 2)
+        case .finalReturn, .ready: return (both ? 4 : 2, both ? 4 : 2)
+        default: return (0, both ? 4 : 2)
+        }
+    }
     mutating func observe(_ pose: PadReachPose) {
+        lastSampleMs = pose.tMs
         guard let body = pose.body else { return }
         if stage == .ready, let reference, !reference.compatible(with: body) {
             reset("Distance or body angle changed. Recalibrate comfortable reach."); return
@@ -206,29 +279,29 @@ struct PadReachCalibration {
               let mean = average(), let frame = mean.body else { return }
         switch stage {
         case .guardPose:
-            guard stable(mean), pose.tMs - stageStarted >= 900 else { return }
+            guard stable(mean), pose.tMs - stageStarted >= Self.guardHoldMs else { return }
             reference = frame
             for hand in hands { if let wrist = mean.points[wristIndex(hand)] { guards[hand] = frame.local(wrist) } }
             guard guards.count == hands.count else { return }
             transition(hands.contains(.lead) ? .leadReach : .rearReach, at: pose.tMs)
         case .leadReach, .rearReach:
-            guard pose.tMs - stageStarted >= 5000 else { return }
+            guard pose.tMs - stageStarted >= Self.reachHoldMs else { return }
             let hand: BoxMaxxingJudge.Hand = stage == .leadReach ? .lead : .rear
-            if !stable(mean), pose.tMs - stageStarted < 9000 { return }
+            if !stable(mean), pose.tMs - stageStarted < Self.reachTimeoutMs { return }
             guard stable(mean), let reference, let guardPoint = guards[hand], let wrist = mean.points[wristIndex(hand)] else {
-                stage = .failed; notice = "The reach was not steady enough to capture. Return to guard and recalibrate."; return
+                stage = .failed; notice = "Hold the punch out a little steadier. Back to guard—we’ll go again."; return
             }
             let endpoint = reference.local(wrist)
             guard (endpoint - guardPoint).length >= 0.3,
                   abs(frame.scale / reference.scale - 1) <= 0.35,
                   (frame.centre - reference.centre).length < reference.scale * 0.6 else {
-                stage = .failed; notice = "Arm travel is too small or the body moved too far in this view. Use a slight camera angle with both shoulders visible, then recalibrate."; return
+                stage = .failed; notice = "Reach a little further, and stay in place. Back to guard—we’ll go again."; return
             }
             let scatter = samples.compactMap { $0.points[wristIndex(hand)] }.map { (reference.local($0) - endpoint).length }.max() ?? 0
             reaches[hand] = Reach(endpoint: endpoint, scatter: scatter)
             transition(hand == .lead && hands.contains(.rear) ? .leadReturn : .finalReturn, at: pose.tMs)
         case .leadReturn, .finalReturn:
-            guard isGuard(mean), stable(mean), pose.tMs - stageStarted >= 700 else { return }
+            guard isGuard(mean), stable(mean), pose.tMs - stageStarted >= Self.returnHoldMs else { return }
             transition(stage == .leadReturn ? .rearReach : .ready, at: pose.tMs)
         default: break
         }
@@ -267,8 +340,13 @@ struct PadReachCalibration {
         let base = level == .beginner ? 0.32 : level == .intermediate ? 0.26 : 0.21
         // Calibration noise contributes to the VISIBLE radius, never a hidden
         // judging expansion. Keep guard outside the acceptance circle.
-        let radius = min(travel * 0.45, max(base, reach.scatter * 2 + 0.08)) * body.scale
+        let localRadius = min(travel * 0.45, max(base, reach.scatter * 2 + 0.08))
+        // The recognizer only accepts straight punches whose peak stays above
+        // its head-zone line (0.5 shoulder widths below the shoulders). Keep the
+        // whole pad inside that zone so hitting the pad is a recognised punch.
+        var endpoint = reach.endpoint
+        endpoint.y = min(endpoint.y, Self.headZoneLowerLimit - localRadius)
         return .init(cueID: id, calibrationID: calibrationID, generation: generation, hand: hand,
-                     centre: body.source(reach.endpoint), origin: body.source(origin), radius: radius, body: body)
+                     centre: body.source(endpoint), origin: body.source(origin), radius: localRadius * body.scale, body: body)
     }
 }

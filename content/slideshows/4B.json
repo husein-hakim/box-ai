@@ -1,0 +1,33 @@
+{
+  "id": "4B",
+  "caption": "save this before your next spar #boxing #sparring #boxingtips #fightiq #boxingtraining",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "gym-ring-bright-wide.jpg",
+      "needs": "boxer walking to the ring, back to camera, spotlight",
+      "text": "4 habits that make you dangerous in the ring...",
+      "sub": "(Swipe right)"
+    },
+    {
+      "image": "boxers-bag-gym-bright-bw.jpg",
+      "needs": "boxer throwing combo on pads, blur",
+      "text": "Punch in combinations. Single shots are easy to read."
+    },
+    {
+      "image": "ring-sparring-wide-gym.jpg",
+      "needs": "boxer slipping, low light",
+      "text": "Finish every combo with defense. Slip, roll or step out."
+    },
+    {
+      "image": "heavy-bag-tv-dark-room.jpg",
+      "needs": "body shot on heavy bag",
+      "text": "Attack the body early. It brings the hands down later."
+    },
+    {
+      "image": "hoodie-gym-bench-night.jpg",
+      "needs": "boxer sitting in corner, towel, calm",
+      "text": "Stay calm when you get hit. Panic is what gets you knocked out."
+    }
+  ]
+}

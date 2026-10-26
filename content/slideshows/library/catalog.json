@@ -1,0 +1,628 @@
+{
+ "rejected": {
+  "0c737e9157f3c037448b03ed3287336c.jpg": "same photo as the Cal AI reference slideshow",
+  "f7b13902118c5b6936c93134aa2407c0.jpg": "same photo as the Cal AI reference slideshow",
+  "21c5b2d0aa39a2fd651d18a09d090e2b.jpg": "duplicate of #10",
+  "83d992270b8fd4034775db31665ec833.jpg": "MMA cage, not boxing"
+ },
+ "photos": {
+  "hoodie-jumprope-gym-bw.jpg": {
+   "w": 736,
+   "h": 920,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "4A"
+   ]
+  },
+  "hoodie-head-down-gloves-square.jpg": {
+   "w": 720,
+   "h": 720,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "guard-headgear-ring-bw.jpg": {
+   "w": 736,
+   "h": 1104,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "3A"
+   ]
+  },
+  "hoodie-walking-to-bag-bw.jpg": {
+   "w": 736,
+   "h": 981,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2B"
+   ]
+  },
+  "hoodie-gym-rack-night-city.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "heavy-bag-modern-gym.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "3B"
+   ]
+  },
+  "empty-ring-dark-gym.jpg": {
+   "w": 1080,
+   "h": 1920,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5A"
+   ]
+  },
+  "jumprope-backlit-doorway-bw.jpg": {
+   "w": 1067,
+   "h": 1600,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5B"
+   ]
+  },
+  "hoodie-brown-punching-bag.jpg": {
+   "w": 736,
+   "h": 1307,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "3A"
+   ]
+  },
+  "empty-ring-moody.jpg": {
+   "w": 736,
+   "h": 1082,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "ring-sparring-wide-gym.jpg": {
+   "w": 736,
+   "h": 981,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "4B"
+   ]
+  },
+  "heavy-bag-dark-gym.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2B"
+   ]
+  },
+  "fight-in-ring-bw.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "1B"
+   ]
+  },
+  "pullup-bar-field-dusk.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5B"
+   ]
+  },
+  "fight-ring-bw.jpg": {
+   "w": 640,
+   "h": 960,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": [
+    "3B"
+   ]
+  },
+  "bag-gloves-hanging-dark.jpg": {
+   "w": 1080,
+   "h": 1920,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5A"
+   ]
+  },
+  "runner-fog-headlights.jpg": {
+   "w": 736,
+   "h": 1104,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "gloves-gymbag-bench.jpg": {
+   "w": 675,
+   "h": 1200,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "jumprope-snow-field.jpg": {
+   "w": 675,
+   "h": 1200,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": [
+    "4A"
+   ]
+  },
+  "hoodie-gym-bench-night.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "4B"
+   ]
+  },
+  "hand-wraps-closeup-bw.jpg": {
+   "w": 980,
+   "h": 1400,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2A"
+   ]
+  },
+  "shadowbox-by-heavy-bag.jpg": {
+   "w": 736,
+   "h": 981,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2A"
+   ]
+  },
+  "wrapping-hands-closeup.jpg": {
+   "w": 736,
+   "h": 981,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5A"
+   ]
+  },
+  "shirtless-boxer-back-ring.jpg": {
+   "w": 735,
+   "h": 1073,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2B"
+   ]
+  },
+  "hoodie-444-rack.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "sparring-headgear-gym.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "1B"
+   ]
+  },
+  "boxer-guard-shirtless-dark.jpg": {
+   "w": 736,
+   "h": 980,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "3A"
+   ]
+  },
+  "boxers-bag-gym-bright-bw.jpg": {
+   "w": 736,
+   "h": 1027,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "4B"
+   ]
+  },
+  "ring-corner-shoes-water.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "3B"
+   ]
+  },
+  "boxing-shoes-jumping.jpg": {
+   "w": 735,
+   "h": 1103,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "1B"
+   ]
+  },
+  "jumprope-street-night-small.jpg": {
+   "w": 361,
+   "h": 640,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "gymbag-gloves-floor.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2B"
+   ]
+  },
+  "hoodie-walking-wet-track.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "4A"
+   ]
+  },
+  "fog-field-lone-figure.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "man-sitting-gym-back.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2B"
+   ]
+  },
+  "jumprope-street-night.jpg": {
+   "w": 1080,
+   "h": 1920,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5B"
+   ]
+  },
+  "gloves-mouthguard-floor.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "hoodie-sitting-blur-gym.jpg": {
+   "w": 1080,
+   "h": 1920,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5A"
+   ]
+  },
+  "sprinter-motion-blur-night.jpg": {
+   "w": 736,
+   "h": 1104,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "1A"
+   ]
+  },
+  "gym-ring-bright-wide.jpg": {
+   "w": 736,
+   "h": 1104,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "4B"
+   ]
+  },
+  "gym-weights-bench-dark.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "heavy-bag-tv-dark-room.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "4B"
+   ]
+  },
+  "heavy-bag-chain-gym.jpg": {
+   "w": 621,
+   "h": 1104,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "bag-gloves-hanging-dark-2.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "hoodie-corner-ropes.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "1A"
+   ]
+  },
+  "heavy-bag-very-dark.jpg": {
+   "w": 675,
+   "h": 1200,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "jumprope-floor.jpg": {
+   "w": 736,
+   "h": 981,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "4A"
+   ]
+  },
+  "runner-road-dusk.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "home-gym-dark.jpg": {
+   "w": 474,
+   "h": 711,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "gym-bench-weights.jpg": {
+   "w": 675,
+   "h": 1200,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "punching-bag-usi-dark.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "1A"
+   ]
+  },
+  "shadowboxing-spotlight-gym.jpg": {
+   "w": 675,
+   "h": 1200,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": [
+    "3B"
+   ]
+  },
+  "punching-bag-gym-wide.jpg": {
+   "w": 1080,
+   "h": 1920,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "1A"
+   ]
+  },
+  "wrapped-hand-on-bag.jpg": {
+   "w": 474,
+   "h": 698,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "wrapped-hand-bag-closeup.jpg": {
+   "w": 720,
+   "h": 1280,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "3A"
+   ]
+  },
+  "punching-knockout-bag.jpg": {
+   "w": 736,
+   "h": 1059,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2A"
+   ]
+  },
+  "garage-gym-bag-dark.jpg": {
+   "w": 736,
+   "h": 981,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5B"
+   ]
+  },
+  "heavy-bag-teal-dark.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "hoodie-punch-ring-dark.jpg": {
+   "w": 736,
+   "h": 920,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "3A"
+   ]
+  },
+  "sparring-dim-gym.jpg": {
+   "w": 1200,
+   "h": 1811,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "1B"
+   ]
+  },
+  "garage-gym-bright.jpg": {
+   "w": 960,
+   "h": 1196,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "boxer-head-on-bag-exhausted.jpg": {
+   "w": 720,
+   "h": 1280,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "1A"
+   ]
+  },
+  "runner-fog-forest-road.jpg": {
+   "w": 736,
+   "h": 1104,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "4A"
+   ]
+  },
+  "hoodie-punching-bag-bw.jpg": {
+   "w": 736,
+   "h": 981,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2A"
+   ]
+  },
+  "pullups-gym-window.jpg": {
+   "w": 736,
+   "h": 1156,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "shirtless-back-gym-baggy.jpg": {
+   "w": 736,
+   "h": 1263,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "2A"
+   ]
+  },
+  "leg-press-hooded.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "boxer-guard-by-bag.jpg": {
+   "w": 694,
+   "h": 1200,
+   "low_res": true,
+   "source": "pinterest",
+   "used_in": [
+    "1B"
+   ]
+  },
+  "ring-gloves-gear-red.jpg": {
+   "w": 720,
+   "h": 1280,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "heavy-bag-hallway.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5B"
+   ]
+  },
+  "gloves-rope-headgear-flatlay.jpg": {
+   "w": 736,
+   "h": 1307,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "3B"
+   ]
+  },
+  "ring-gloves-gear-bw.jpg": {
+   "w": 720,
+   "h": 1280,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": [
+    "5A"
+   ]
+  },
+  "ring-gym-wide-red.jpg": {
+   "w": 736,
+   "h": 1308,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  },
+  "runner-snow-road.jpg": {
+   "w": 1200,
+   "h": 2132,
+   "low_res": false,
+   "source": "pinterest",
+   "used_in": []
+  }
+ }
+}

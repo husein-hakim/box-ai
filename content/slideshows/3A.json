@@ -1,0 +1,33 @@
+{
+  "id": "3A",
+  "caption": "the jab is the most important punch in boxing #boxing #jab #boxingtips #boxingtraining #boxer",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "hoodie-punch-ring-dark.jpg",
+      "needs": "boxer throwing jab, side silhouette, ring lights",
+      "text": "Here's exactly why your jab isn't working...",
+      "sub": "(Swipe right)"
+    },
+    {
+      "image": "hoodie-brown-punching-bag.jpg",
+      "needs": "boxer shadowboxing, motion blur",
+      "text": "You only throw it once. Double it, triple it, change the speed."
+    },
+    {
+      "image": "boxer-guard-shirtless-dark.jpg",
+      "needs": "boxer in guard, mirror reflection",
+      "text": "It comes back low. Bring it home on the same line it went out."
+    },
+    {
+      "image": "guard-headgear-ring-bw.jpg",
+      "needs": "feet stepping on ring canvas",
+      "text": "You don't step with it. A jab without footwork falls short."
+    },
+    {
+      "image": "wrapped-hand-bag-closeup.jpg",
+      "needs": "boxer hitting body of heavy bag",
+      "text": "You only aim at the head. Jab the body, then go back upstairs."
+    }
+  ]
+}

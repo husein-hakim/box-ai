@@ -37,7 +37,7 @@ struct AppBootstrap: View {
         .task { if store == nil { open() } }
     }
     private func open() {
-        do { store = try AppStore(container: LocalDatabase.open()); error = nil }
+        do { store = try AppStore(container: LocalDatabase.openForApp()); error = nil }
         catch { self.error = "Your saved data could not be opened. It has not been erased. \(error.localizedDescription)" }
     }
 }
@@ -78,6 +78,7 @@ struct AppShell: View {
                 NavigationStack { ProgressViewScreen(store: store, sheet: $sheet) }
             }
         }
+        .overlay { ProgressionCelebrationHost(store: store) }
         .onChange(of: selectedTab) { _, _ in BoxHaptics.selection() }
         .sheet(item: $sheet, onDismiss: {
             if let launch = store.queuedSession {

@@ -2,26 +2,28 @@ import Foundation
 import SwiftData
 
 @Model final class AthleteProfile {
-    @Attribute(.unique) var key: String
-    var name: String
-    var experience: String
-    var goal: String
-    var equipment: [String]
-    var space: String
+    var key: String = ""
+    var name: String = ""
+    var experience: String = ""
+    var goal: String = ""
+    var equipment: [String] = []
+    var space: String = ""
     var nutritionInputData: Data?
-    var sessionMinutes: Int
+    /// The fighter style the program should lean toward (encoded StyleFocus).
+    var styleFocusData: Data? = nil
+    var sessionMinutes: Int = 0
     init() { key = "primary"; name = ""; experience = "Beginner"; goal = "Build consistency"; equipment = []; space = "Small indoor space"; sessionMinutes = 10 }
 }
 
 @Model final class PlannedPractice {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var focusRaw: String
-    var rounds: Int
-    var workSeconds: Int
-    var restSeconds: Int
-    var source: String
-    var note: String
+    var id: UUID = UUID()
+    var date: Date = Date.now
+    var focusRaw: String = ""
+    var rounds: Int = 0
+    var workSeconds: Int = 0
+    var restSeconds: Int = 0
+    var source: String = ""
+    var note: String = ""
     var sessionData: Data?
     var completionID: UUID?
     var planID: UUID?
@@ -41,11 +43,11 @@ import SwiftData
 }
 
 @Model final class WorkoutCompletion {
-    @Attribute(.unique) var id: UUID
-    var date: Date
-    var routineID: String
-    var title: String
-    var exerciseIDs: [String]
+    var id: UUID = UUID()
+    var date: Date = Date.now
+    var routineID: String = ""
+    var title: String = ""
+    var exerciseIDs: [String] = []
     var notes: String = ""
     init(routineID: String, title: String, exerciseIDs: [String], notes: String = "") {
         id = UUID(); date = .now; self.routineID = routineID; self.title = title; self.exerciseIDs = exerciseIDs
@@ -54,9 +56,9 @@ import SwiftData
 }
 
 @Model final class WorkoutDraft {
-    @Attribute(.unique) var routineID: String
-    var exerciseIDs: [String]
-    var notes: String
+    var routineID: String = ""
+    var exerciseIDs: [String] = []
+    var notes: String = ""
     init(routineID: String, exerciseIDs: [String], notes: String) {
         self.routineID = routineID; self.exerciseIDs = exerciseIDs; self.notes = notes
     }

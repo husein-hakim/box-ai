@@ -1,0 +1,73 @@
+[
+  {
+    "name": "before-today",
+    "fails": [
+      "Contrast below WCAG on solid ground: 4.46:1 16px \"Edit days\"; 4.02:1 12px \"M19\"; 4.02:1 12px \"Reaction training\"; 3.99:1 17px \"Start session\""
+    ],
+    "warns": [
+      "10 distinct text sizes. A type scale has 5 to 7 steps: 44, 28, 26, 20, 19, 17, 16, 15, 13, 12"
+    ],
+    "facts": {
+      "fonts": {
+        "SF Pro": 29
+      },
+      "sizes": [
+        44,
+        28,
+        26,
+        20,
+        19,
+        17,
+        16,
+        15,
+        13,
+        12
+      ],
+      "weights": [
+        "400",
+        "500",
+        "600",
+        "700",
+        "800",
+        "900"
+      ],
+      "leftEdges": 5,
+      "accentHues": [
+        0
+      ],
+      "cards": 3
+    }
+  },
+  {
+    "name": "before-round",
+    "fails": [
+      "Contrast below WCAG on solid ground: 3.99:1 17px \"Resume round\""
+    ],
+    "warns": [],
+    "facts": {
+      "fonts": {
+        "SF Pro": 9
+      },
+      "sizes": [
+        96,
+        30,
+        20,
+        17,
+        16,
+        15,
+        12
+      ],
+      "weights": [
+        "300",
+        "400",
+        "600",
+        "700"
+      ],
+      "leftEdges": 2,
+      "accentHues": [
+        0
+      ],
+      "cards": 1
+    }
+  }
+]

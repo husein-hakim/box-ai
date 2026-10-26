@@ -1,0 +1,33 @@
+{
+  "id": "3B",
+  "caption": "every beginner needs to see this \ud83e\udd4a #boxing #boxingbeginner #boxingtips #boxingtraining #boxer",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "shadowboxing-spotlight-gym.jpg",
+      "needs": "beginner wrapping hands on bench, moody",
+      "text": "How to look like a real boxer in your first month...",
+      "sub": "(Step by step)"
+    },
+    {
+      "image": "fight-ring-bw.jpg",
+      "needs": "boxer close-up guard, eyes shadowed",
+      "text": "Chin down, eyes up. Look through your eyebrows."
+    },
+    {
+      "image": "ring-corner-shoes-water.jpg",
+      "needs": "boxing shoes stance on floor",
+      "text": "Feet shoulder-width, back heel up. Never cross your feet."
+    },
+    {
+      "image": "heavy-bag-modern-gym.jpg",
+      "needs": "boxer in mirror, gym",
+      "text": "Every punch comes back to your face. Guard first, power second."
+    },
+    {
+      "image": "gloves-rope-headgear-flatlay.jpg",
+      "needs": "notebook / chalkboard combos in gym, or gloves hanging",
+      "text": "Learn 4 punches clean before you learn 40 combos."
+    }
+  ]
+}

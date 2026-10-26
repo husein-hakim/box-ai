@@ -6,9 +6,12 @@ struct ReviewLibraryView: View {
     let store: AppStore
     @Binding var sheet: AppSheet?
     @State private var importing = false
+    @State private var importingStudy = false
+    @State private var studyVideo: LocalVideo?
     @State private var busy = false
     @State private var error: String?
     var body: some View {
+        let studies = store.styleStudies
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .top) {
@@ -26,12 +29,13 @@ struct ReviewLibraryView: View {
                 }.boxEntrance()
                 ReviewIntroduction(compact: !store.videos.isEmpty, record: { sheet = .camera }, importClip: { importing = true })
                     .disabled(busy).boxEntrance(1)
+                StudyFighterCard(active: store.styleFocus) { importingStudy = true }.disabled(busy).boxEntrance(2)
                 if store.videos.isEmpty {
                     BoxSectionHeader(title: "How it works").padding(.top, 12).boxEntrance(2)
                     HStack(spacing: 8) {
                         ReviewStep(number: 1, symbol: "camera.fill", title: "Record", detail: "A round on your phone")
-                        ReviewStep(number: 2, symbol: "bookmark.fill", title: "Mark", detail: "Moments you notice")
-                        ReviewStep(number: 3, symbol: "sparkles", title: "Ask", detail: "Your coach for a focus")
+                        ReviewStep(number: 2, symbol: "sparkles", title: "Review", detail: "Scores and the fix that matters")
+                        ReviewStep(number: 3, symbol: "figure.boxing", title: "Drill", detail: "Practise the fix, see it improve")
                     }
                     .fixedSize(horizontal: false, vertical: true)
                     .boxEntrance(3)
@@ -41,13 +45,28 @@ struct ReviewLibraryView: View {
                         .frame(maxWidth: .infinity, alignment: .leading).boxPanel()
                 }
                 if let error { BoxInlineNotice(text: "\(error)", symbol: "exclamationmark.triangle", color: BoxStyle.accent) }
-                if !store.videos.isEmpty {
-                    BoxSectionHeader(title: "Your clips") { Text(store.videos.count, format: .number) }
+                if !studies.isEmpty {
+                    BoxSectionHeader(title: "Fighter studies") { Text(studies.count, format: .number) }
                         .padding(.top, 12).boxEntrance(2)
                     BoxRowGroup {
-                        ForEach(store.videos) { video in
+                        ForEach(studies, id: \.report.id) { item in
+                            NavigationLink { SavedAIReportView(store: store, report: item.report) } label: {
+                                BoxRow(symbol: "person.fill.viewfinder", color: BoxStyle.strength, title: item.style.isRejected ? String(localized: "Study not possible") : item.style.fighter,
+                                       subtitle: item.style.isRejected ? (item.style.rejectReason ?? "") : "\(item.style.archetype) · \(item.report.date.formatted(.dateTime.month(.abbreviated).day()))") {
+                                    if store.styleFocus?.fighter == item.style.fighter { BoxChip(text: "Focus", color: BoxStyle.strength) }
+                                }
+                            }.buttonStyle(BoxPressStyle(scale: 0.985))
+                        }
+                    }.boxEntrance(3)
+                }
+                let clips = store.videos.filter { $0.kind != "Fighter study" }
+                if !clips.isEmpty {
+                    BoxSectionHeader(title: "Your clips") { Text(clips.count, format: .number) }
+                        .padding(.top, 12).boxEntrance(2)
+                    BoxRowGroup {
+                        ForEach(clips) { video in
                             NavigationLink { VideoDetailView(store: store, video: video) } label: {
-                                ReviewClipRow(video: video, reviewed: store.reports.contains { $0.videoID == video.id }, notes: store.markers.filter { $0.videoID == video.id }.count)
+                                ReviewClipRow(video: video, reviewed: store.reports.contains { $0.videoID == video.id && $0.kind != "style-1" }, notes: store.markers.filter { $0.videoID == video.id }.count)
                             }.buttonStyle(BoxPressStyle(scale: 0.985))
                         }
                     }.boxEntrance(3)
@@ -56,7 +75,12 @@ struct ReviewLibraryView: View {
         }
         .boxScreen(tint: BoxStyle.coach).foregroundStyle(BoxStyle.ink)
         .navigationTitle("Review").navigationBarTitleDisplayMode(.inline).toolbar(.hidden, for: .navigationBar)
-        .fileImporter(isPresented: $importing, allowedContentTypes: [.movie]) { result in
+        .navigationDestination(item: $studyVideo) { video in ClipAnalysisView(store: store, video: video, purpose: .style) }
+        .fileImporter(isPresented: $importingStudy, allowedContentTypes: [.movie]) { result in importClip(result, kind: "Fighter study") }
+        .fileImporter(isPresented: $importing, allowedContentTypes: [.movie]) { result in importClip(result, kind: "Unsorted") }
+    }
+
+    private func importClip(_ result: Result<URL, Error>, kind: String) {
             switch result {
             case .failure(let failure): error = failure.localizedDescription
             case .success(let url):
@@ -69,11 +93,34 @@ struct ReviewLibraryView: View {
                         guard bytes <= 500_000_000 else { error = "Choose a clip smaller than 500 MB."; return }
                         let asset = AVURLAsset(url: url)
                         guard try await !asset.loadTracks(withMediaType: .video).isEmpty else { error = "This file does not contain a playable video track."; return }
-                        if !(await store.saveVideo(from: url, title: url.deletingPathExtension().lastPathComponent, kind: "Unsorted")) { error = store.storageNotice }
+                        if !(await store.saveVideo(from: url, title: url.deletingPathExtension().lastPathComponent, kind: kind)) { error = store.storageNotice; return }
+                        if kind == "Fighter study" { studyVideo = store.videos.first { $0.kind == kind } }
                     } catch { self.error = "The clip could not be imported. \(error.localizedDescription)" }
                 }
             }
+    }
+}
+
+/// Entry to the style study: learn to fight like someone from their footage.
+private struct StudyFighterCard: View {
+    let active: StyleFocus?
+    let start: () -> Void
+    var body: some View {
+        Button(action: start) {
+            HStack(spacing: 14) {
+                BoxIconWell(symbol: "person.fill.viewfinder", size: 48, color: BoxStyle.strength)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Study a fighter").font(.headline)
+                    Text(active.map { "Training toward \($0.fighter). Import footage to study someone else." } ?? "Import footage of any boxer. Get their style broken down and a program to fight like them.")
+                        .font(.caption).foregroundStyle(BoxStyle.muted).multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(BoxStyle.dim)
+            }
+            .foregroundStyle(BoxStyle.ink)
+            .boxPanel(padding: 16, tint: BoxStyle.strength)
         }
+        .buttonStyle(BoxPressStyle())
     }
 }
 
@@ -86,7 +133,7 @@ private struct ReviewIntroduction: View {
             Label("Your clips · Coach review", systemImage: "viewfinder").boxEyebrow(.white.opacity(0.85))
             Text("See it.\nFix it.").boxDisplay(compact ? 34 : 40, relativeTo: .title).padding(.top, 10)
             if !compact {
-                Text("Record a round, mark what you notice, and ask your coach about any moment.")
+                Text("Record a round. Your coach scores it, picks the fix that matters most and gives you the drills.")
                     .font(.subheadline).foregroundStyle(.white.opacity(0.82)).padding(.top, 6)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -96,7 +143,7 @@ private struct ReviewIntroduction: View {
                 Button(action: importClip) { Label("Import", systemImage: "square.and.arrow.down").frame(maxWidth: .infinity) }
                     .buttonStyle(BoxHeroButtonStyle(kind: .ghost))
             }.padding(.top, 18)
-            Text("Clips stay on this iPhone. Only requested AI reviews send selected frames for analysis.")
+            Text("Clips stay on this iPhone. A review sends a few short image strips and the measurements, never the video.")
                 .font(.caption2).foregroundStyle(.white.opacity(0.7)).padding(.top, 12)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -249,10 +296,15 @@ private struct ClipReviewActions: View {
     let video: LocalVideo
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            NavigationLink { VideoAIReviewView(store: store, video: video) } label: {
-                BoxRow(symbol: "sparkles", color: BoxStyle.coach, title: String(localized: "Review with your coach"),
-                       subtitle: String(localized: "Choose a segment and send selected frames"))
+            NavigationLink { ClipAnalysisView(store: store, video: video, purpose: .review) } label: {
+                BoxRow(symbol: "sparkles", color: BoxStyle.coach, title: String(localized: "Coach review"),
+                       subtitle: String(localized: "Scores, fixes and drills for this clip"))
                     .boxPanel(padding: 0, tint: BoxStyle.coach)
+            }.buttonStyle(BoxPressStyle())
+            NavigationLink { ClipAnalysisView(store: store, video: video, purpose: .style) } label: {
+                BoxRow(symbol: "person.fill.viewfinder", color: BoxStyle.strength, title: String(localized: "Study the fighter in this clip"),
+                       subtitle: String(localized: "Break down their style and train like them"))
+                    .boxPanel(padding: 0)
             }.buttonStyle(BoxPressStyle())
             ForEach(store.reports.filter { $0.videoID == video.id }) { report in
                 NavigationLink { SavedAIReportView(store: store, report: report) } label: { SavedReportRow(report: report) }
@@ -270,9 +322,17 @@ private struct ClipReviewActions: View {
 private struct SavedReportRow: View {
     let report: AIClipReport
     var body: some View {
-        BoxRow(symbol: "doc.text.magnifyingglass", color: BoxStyle.coach, title: String(localized: "Saved coaching review"),
-               subtitle: report.date.formatted(.dateTime.month(.abbreviated).day().hour().minute())) {
-            BoxChip(text: "AI estimate", color: BoxStyle.coach)
+        let date = report.date.formatted(.dateTime.month(.abbreviated).day().hour().minute())
+        Group {
+            if let style = report.style {
+                BoxRow(symbol: "person.fill.viewfinder", color: BoxStyle.strength, title: style.isRejected ? String(localized: "Study not possible") : style.fighter, subtitle: date)
+            } else if let review = report.review {
+                BoxRow(symbol: "doc.text.magnifyingglass", color: BoxStyle.coach, title: review.isRejected ? String(localized: "Review not possible") : review.headline, subtitle: date) {
+                    if let score = review.scores?.overall { Text("\(score)").boxNumber(20).foregroundStyle(BoxStyle.coach) }
+                }
+            } else {
+                BoxRow(symbol: "doc.text.magnifyingglass", color: BoxStyle.coach, title: String(localized: "Earlier frame review"), subtitle: date)
+            }
         }
         .boxPanel(padding: 0)
     }

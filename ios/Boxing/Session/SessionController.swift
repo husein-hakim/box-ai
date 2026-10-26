@@ -208,7 +208,7 @@ final class SessionController {
     func checkpoint() -> SessionCheckpoint {
         SessionCheckpoint(timeline: timeline, issuedCues: issuedCues, cueIndex: cueIndex, cueRaw: cue.rawValue)
     }
-    func record(feedback: String = "") -> SessionRecord {
+    func record(feedback: String = "", effort: Int? = nil) -> SessionRecord {
         if let pad, execution == nil {
             return SessionRecord(id: launch.id, date: .now, focus: launch.focus, activeSeconds: pad.activeSeconds,
                 workSeconds: pad.workSeconds, completedRounds: pad.completedRounds, skippedBlocks: 0,
@@ -220,7 +220,7 @@ final class SessionController {
                                  completedRounds: execution.results.reduce(0) { $0 + $1.confirmedSets },
                                  skippedBlocks: execution.results.filter(\.skipped).count, issuedCues: 0,
                                  finished: !execution.endedEarly && execution.results.indices.allSatisfy { execution.outcome(at: $0) == .completed },
-                                 guided: GuidedSummary(execution: execution, feedback: String(feedback.prefix(1000))), assignmentID: execution.assignmentID)
+                                 guided: GuidedSummary(execution: execution, feedback: String(feedback.prefix(1000)), effort: effort), assignmentID: execution.assignmentID)
         }
         return SessionRecord(id: launch.id, date: .now, focus: launch.focus,
                       activeSeconds: timeline.activeSeconds, workSeconds: timeline.workSeconds,

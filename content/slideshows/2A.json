@@ -1,0 +1,33 @@
+{
+  "id": "2A",
+  "caption": "save this for your next bag session \ud83e\udd4a #boxing #punchingpower #boxingtips #heavybag #boxingtraining",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "punching-knockout-bag.jpg",
+      "needs": "heavy bag swinging in empty dark gym",
+      "text": "How to hit harder without lifting heavier...",
+      "sub": "(Step by step)"
+    },
+    {
+      "image": "shadowbox-by-heavy-bag.jpg",
+      "needs": "close-up boxing shoes pivoting",
+      "text": "Turn your back foot like you're crushing a bug. Power starts from the floor."
+    },
+    {
+      "image": "shirtless-back-gym-baggy.jpg",
+      "needs": "boxer throwing a cross, shot from behind",
+      "text": "Rotate your hips before your arm moves. The arm goes last."
+    },
+    {
+      "image": "hand-wraps-closeup-bw.jpg",
+      "needs": "hand wraps close-up",
+      "text": "Stay loose until the moment of contact. Tension slows the punch down."
+    },
+    {
+      "image": "hoodie-punching-bag-bw.jpg",
+      "needs": "glove impact on bag, dust/sweat",
+      "text": "Punch through the target, not at it. Aim 4 inches behind it."
+    }
+  ]
+}

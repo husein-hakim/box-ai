@@ -29,6 +29,12 @@ struct PlanningContext: Codable, Sendable {
     let feedback: String
     let catalog: [CatalogActivity]
     let capabilities: CapabilityRegistry
+    /// Fighter style to lean the week toward, from a style study.
+    var styleFocus: StyleFocus? = nil
+    /// Top corrections from the user's recent clip reviews.
+    var reviewFocus: [String]? = nil
+    /// Four weeks of digested training data and adaptation rules.
+    var adaptive: AdaptiveSummary? = nil
     var trainingOffsets: Set<Int> { Set(localSchedule.filter(\.trainingAllowed).map(\.offset)) }
 
 }
@@ -79,10 +85,10 @@ struct TrainingPlanProposal: Codable, Sendable {
 }
 
 @Model final class AcceptedTrainingPlan {
-    @Attribute(.unique) var id: UUID
-    var acceptedAt: Date
-    var payload: Data
-    var contextPayload: Data
+    var id: UUID = UUID()
+    var acceptedAt: Date = Date.now
+    var payload: Data = Data()
+    var contextPayload: Data = Data()
     init(proposal: TrainingPlanProposal, context: PlanningContext) throws {
         id = UUID(); acceptedAt = .now
         payload = try JSONEncoder().encode(proposal); contextPayload = try JSONEncoder().encode(context)
@@ -111,7 +117,8 @@ extension AppStore {
         }
         return .init(startDate: start, requestedAt: .now, timeZoneID: calendar.timeZone.identifier, localSchedule: schedule,
                      constraints: planningConstraints, history: recent, feedback: String(feedback.prefix(1000)),
-                     catalog: ActivityCatalog.all.compactMap { $0.available(equipment: activityEquipment, openSpace: hasOpenSpace, difficulty: activityDifficulty) }, capabilities: .current)
+                     catalog: ActivityCatalog.all.compactMap { $0.available(equipment: activityEquipment, openSpace: hasOpenSpace, difficulty: activityDifficulty) }, capabilities: .current,
+                     styleFocus: styleFocus, reviewFocus: reviewFocus.isEmpty ? nil : reviewFocus, adaptive: adaptiveSummary)
     }
     @discardableResult func acceptTrainingPlan(_ proposal: TrainingPlanProposal, context requestContext: PlanningContext) -> Bool {
         guard requestContext.constraints == planningConstraints, requestContext.timeZoneID == TimeZone.current.identifier,

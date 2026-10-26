@@ -1,0 +1,33 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BOX player</title>
+<style>
+  html,body{margin:0;background:#000;color:#aaa;font:13px -apple-system,sans-serif}
+  #wrap{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px}
+  canvas{height:calc(100vh - 60px);aspect-ratio:9/16;background:#111}
+  input{width:min(90vw,520px)}
+</style></head>
+<body><div id="wrap"><canvas id="c" width="1080" height="1920"></canvas>
+<div><button id="play">pause</button> <input id="scrub" type="range" min="0" max="1000" value="0"> <span id="tc"></span></div></div>
+<script src="engine.js"></script>
+<script>
+  // Loads ../videos/<scene>.js. Renderer calls window.renderAt(t); in the browser it plays in real time.
+  const scene = new URLSearchParams(location.search).get('scene');
+  const s = document.createElement('script'); s.src = `../videos/${scene}.js`;
+  s.onload = () => {
+    const ctx = document.getElementById('c').getContext('2d');
+    window.renderAt = t => { ctx.setTransform(1,0,0,1,0,0); window.SCENE.draw(ctx, t); };
+    window.sceneReady = true;
+    if (navigator.webdriver) return;
+    let playing = true, t0 = performance.now(), offset = 0;
+    const scrub = document.getElementById('scrub'), tc = document.getElementById('tc');
+    document.getElementById('play').onclick = e => { playing = !playing; e.target.textContent = playing ? 'pause' : 'play'; t0 = performance.now(); offset = cur; };
+    scrub.oninput = () => { offset = scrub.value / 1000 * SCENE.duration; t0 = performance.now(); cur = offset; renderAt(cur); };
+    let cur = 0;
+    (function loop() {
+      if (playing) { cur = (offset + (performance.now() - t0) / 1000) % SCENE.duration; renderAt(cur); scrub.value = cur / SCENE.duration * 1000; }
+      tc.textContent = cur.toFixed(2) + 's';
+      requestAnimationFrame(loop);
+    })();
+  };
+  document.body.appendChild(s);
+</script></body></html>

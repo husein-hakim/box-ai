@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import SwiftData
+import CoreData
 
 enum TrainingFocus: String, CaseIterable, Identifiable, Codable, Sendable {
     case mixed, jab, straightCombination
@@ -40,6 +41,9 @@ struct SessionRecord: Identifiable, Codable {
     var guided: GuidedSummary?
     var assignmentID: UUID?
     var pad: PadTrainingState?
+    var sparring: SparringSummary? = nil
+    /// Coaching feedback written after the session.
+    var debrief: SessionDebrief? = nil
 }
 
 enum SessionFollowUp { case today, progress, assignment(UUID) }
@@ -65,12 +69,12 @@ final class AppStore {
     private(set) var videos: [LocalVideo] = []
     private(set) var markers: [VideoMarker] = []
     private(set) var reports: [AIClipReport] = []
-    let profile: AthleteProfile
+    private(set) var profile: AthleteProfile
     private(set) var plan: [PlannedPractice] = []
     private(set) var workouts: [WorkoutCompletion] = []
     private(set) var workoutDrafts: [WorkoutDraft] = []
     private(set) var workoutPlans: [SavedWorkoutPlan] = []
-    let targets: NutritionTargets
+    private(set) var targets: NutritionTargets
     private(set) var pendingSession: SessionLaunch?
     var activeSession: SessionLaunch?
     var queuedSession: SessionLaunch?
@@ -79,7 +83,7 @@ final class AppStore {
     var sessionFollowUp: SessionFollowUp?
     @ObservationIgnored let container: ModelContainer
     @ObservationIgnored let context: ModelContext
-    private let preferences: LocalPreferences
+    private var preferences: LocalPreferences
     private static let legacyKey = "boxing.local-progress.v1"
 
     private struct Legacy: Codable {
@@ -93,12 +97,13 @@ final class AppStore {
         self.container = container
         context = ModelContext(container)
         context.autosaveEnabled = false
-        preferences = try context.fetch(FetchDescriptor<LocalPreferences>()).first ?? LocalPreferences()
-        profile = try context.fetch(FetchDescriptor<AthleteProfile>()).first ?? AthleteProfile()
+        let preferences = try context.fetch(FetchDescriptor<LocalPreferences>()).first ?? LocalPreferences()
+        let profile = try context.fetch(FetchDescriptor<AthleteProfile>()).first ?? AthleteProfile()
+        let targets = try context.fetch(FetchDescriptor<NutritionTargets>()).first ?? NutritionTargets()
         if profile.modelContext == nil { context.insert(profile) }
-        targets = try context.fetch(FetchDescriptor<NutritionTargets>()).first ?? NutritionTargets()
         if preferences.modelContext == nil { context.insert(preferences) }
         if targets.modelContext == nil { context.insert(targets) }
+        self.preferences = preferences; self.profile = profile; self.targets = targets
         // Import the complete legacy snapshot before saving anything. Retain it if import fails.
         if !preferences.legacyImported {
             if let data = defaults.data(forKey: Self.legacyKey) {
@@ -117,6 +122,42 @@ final class AppStore {
         }
         try context.save()
         try reload()
+        // Another device's changes arrive through CloudKit; refresh when they land.
+        remoteChanges = NotificationCenter.default.addObserver(forName: .NSPersistentStoreRemoteChange, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.mergeRemoteChanges() }
+        }
+    }
+
+    @ObservationIgnored private var remoteChanges: NSObjectProtocol?
+
+    /// Folds in changes synced from another device: merges duplicate single records
+    /// (two devices can each create a profile before syncing) and reloads.
+    func mergeRemoteChanges() {
+        guard activeSession == nil else { return }
+        do {
+            if let keep = try Self.singleton(context, LocalPreferences.self, score: { ($0.days.count, $0.legacyImported ? 1 : 0) }) { preferences = keep }
+            if let keep = try Self.singleton(context, AthleteProfile.self, score: { ($0.equipment.count + ($0.goal.isEmpty ? 0 : 1) + ($0.styleFocusData == nil ? 0 : 1), $0.sessionMinutes) }) { profile = keep }
+            if let keep = try Self.singleton(context, NutritionTargets.self, score: { ($0.acceptedAt == nil ? 0 : 1, Int($0.calories)) }) { targets = keep }
+            try Self.dedupe(context, SavedPractice.self, by: \.id)
+            try Self.dedupe(context, PlannedPractice.self, by: \.id)
+            try Self.dedupe(context, MealEntry.self, by: \.id)
+            try Self.dedupe(context, AIClipReport.self, by: \.id)
+            if context.hasChanges { try context.save() }
+            try reload()
+        } catch { storageNotice = String(localized: "Synced changes could not be loaded. Your data on this iPhone is unchanged.") }
+    }
+    private static func singleton<T: PersistentModel>(_ context: ModelContext, _ type: T.Type, score: (T) -> (Int, Int)) throws -> T? {
+        let all = try context.fetch(FetchDescriptor<T>())
+        guard all.count > 1 else { return all.first }
+        let keep = all.max { score($0) < score($1) }!
+        for item in all where item.persistentModelID != keep.persistentModelID { context.delete(item) }
+        return keep
+    }
+    private static func dedupe<T: PersistentModel>(_ context: ModelContext, _ type: T.Type, by id: KeyPath<T, UUID>) throws {
+        var seen = Set<UUID>()
+        for item in try context.fetch(FetchDescriptor<T>()) {
+            if seen.contains(item[keyPath: id]) { context.delete(item) } else { seen.insert(item[keyPath: id]) }
+        }
     }
 
     func start(configuration: RoundConfiguration = .init(), focus: TrainingFocus = .mixed) {
@@ -347,7 +388,8 @@ final class AppStore {
         meals = try context.fetch(FetchDescriptor<MealEntry>()).sorted { $0.date > $1.date }
         waterEntries = try context.fetch(FetchDescriptor<WaterEntry>()).sorted { $0.date > $1.date }
         messages = try context.fetch(FetchDescriptor<CoachMessage>()).sorted { $0.date < $1.date }
-        videos = try context.fetch(FetchDescriptor<LocalVideo>()).sorted { $0.date > $1.date }
+        // Clip files stay on the device that recorded them; synced rows for missing files are hidden.
+        videos = try context.fetch(FetchDescriptor<LocalVideo>()).filter { FileManager.default.fileExists(atPath: Self.videoDirectory.appendingPathComponent($0.filename).path) }.sorted { $0.date > $1.date }
         reports = try context.fetch(FetchDescriptor<AIClipReport>()).sorted { $0.date > $1.date }
         markers = try context.fetch(FetchDescriptor<VideoMarker>()).sorted { $0.startSeconds < $1.startSeconds }
     }

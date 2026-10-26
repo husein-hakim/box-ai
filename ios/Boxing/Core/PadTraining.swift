@@ -80,7 +80,7 @@ struct PadRetry: Codable, Equatable, Identifiable, Sendable {
 
 enum PadTrackingGuidance {
     static func isProcessing(_ reason: String) -> Bool {
-        ["capture_clock", "inference_stale", "capture_gap", "processing_delayed", "ui_delivery_stale", "ui_tick_gap", "worker_error", "camera_error"].contains(reason)
+        ["capture_clock", "inference_stale", "capture_gap", "processing_delayed", "ui_delivery_stale", "ui_tick_gap", "worker_error", "camera_error", "tracking_restart"].contains(reason)
     }
     static func instruction(_ reason: String) -> String { String(localized: message(reason)) }
     private static func message(_ reason: String) -> LocalizedStringResource {
@@ -89,13 +89,38 @@ enum PadTrackingGuidance {
         case "calibration_too_close": "Move a little farther back."
         case "calibration_hold_still": "Hold your guard briefly to calibrate."
         case "calibration_partial", "calibration_nobody": "Keep your head, both shoulders and arms in view."
-        case "capture_clock": "Camera timing is uncertain—pause and retry."
-        case "inference_stale", "capture_gap", "processing_delayed", "ui_delivery_stale", "ui_tick_gap": "Camera processing is delayed—pause and retry."
-        case "worker_error", "camera_error": "Camera tracking stopped—pause and retry."
+        case "capture_clock": "Camera timing is uncertain—hold your guard."
+        case "inference_stale", "capture_gap", "processing_delayed", "ui_delivery_stale", "ui_tick_gap": "Camera catching up—hold your guard."
+        case "tracking_restart": "Restarting tracking—hold your guard."
+        case "worker_error", "camera_error": "Camera tracking stopped—pause and resume to retry."
         case "camera_interrupted": "Camera paused. Wait for it to resume."
         case "source_generation", "camera_restarting": "The camera view changed. Hold your guard briefly."
         default: "Keep both shoulders and arms in view."
         }
+    }
+}
+
+/// Plain-language coaching for a punch that was seen but not accepted.
+/// Derived only from the recognizer's own candidate evidence.
+enum PadCoaching {
+    static func message(rejected reason: String?, kind: BoxMaxxingJudge.PunchKind?, zone: BoxMaxxingJudge.Zone?, peakY: Double?) -> String? {
+        switch reason {
+        case "too_small": return String(localized: "Reach all the way out to the pad.")
+        case "too_slow": return String(localized: "Snap it out faster.")
+        case "vertical": return String(localized: "Punch straight forward, not upward.")
+        case "lateral": return String(localized: "Keep it straight. That one curved like a hook.")
+        case "low_confidence": return String(localized: "Sharper, and fully extended.")
+        case "bilateral": return String(localized: "One hand at a time. Keep the other home.")
+        case "classifier": return String(localized: "That didn’t read as a straight punch. Straighter.")
+        default: break
+        }
+        if zone == .body || (peakY.map { $0 > 0.5 } ?? false) { return String(localized: "Punch higher, at head height.") }
+        if let kind, kind != .straight { return String(localized: kind == .hook ? "Keep it straight. That was a hook." : "Keep it straight. That was an uppercut.") }
+        return nil
+    }
+    static func message(forRetryReason reason: String) -> String? {
+        guard reason.hasPrefix("candidate_") else { return nil }
+        return message(rejected: String(reason.dropFirst("candidate_".count)), kind: nil, zone: nil, peakY: nil)
     }
 }
 
@@ -111,6 +136,8 @@ struct PadCameraDiagnostics: Codable, Sendable {
     var maxCaptureAgeMs = 0.0
     var maxProcessingMs = 0.0
     var maxDeliveryMs = 0.0
+    /// Errors the pipeline recovered from on its own (short descriptions, no media).
+    var recoveredErrors: [String: Int]? = [:]
 }
 
 struct PadTrainingDiagnostics: Codable, Sendable {
@@ -286,20 +313,20 @@ struct PadTrainingState: Codable, Sendable {
         guard phase == .work, cueID == id, !cuePresented else { return false }
         cuePresented = true; return true
     }
-    @discardableResult mutating func resolve(id: UUID, outcome: String, reactionMs: Double?, at now: Double, targetMatch: PadTargetMatch? = nil) -> Bool {
+    @discardableResult mutating func resolve(id: UUID, outcome: String, reactionMs: Double?, at now: Double, targetMatch: PadTargetMatch? = nil, coaching: String? = nil) -> Bool {
         guard phase == .work, cueID == id, cuePresented, !attempts.contains(where: { $0.id == id }),
               now.isFinite, ["hit_green", "hit_yellow", "wrong_hand", "wrong_kind", "miss_timeout", "early"].contains(outcome) else { return false }
         guard targetMatch.map({ $0.target.cueID == id && $0.target.hand == hand }) ?? true else { return false }
         attempts.append(.init(id: id, hand: hand, outcome: outcome, reactionMs: reactionMs.flatMap { $0.isFinite ? $0 : nil }, targetMatch: targetMatch))
         cueID = nil; cuePresented = false; nextCueAt = nil; lastTick = nil
         feedbackStage = .outcome; feedbackUntil = nil
-        feedbackID = id; feedbackDetail = targetMatch?.hint; feedback = attempts.last!.title
+        feedbackID = id; feedbackDetail = targetMatch?.hint ?? (attempts.last!.isHit ? nil : coaching); feedback = attempts.last!.title
         if targetMatch?.outcome == .uncertain {
             cueIndex = max(0, cueIndex - 1); uncertainAttempts += 1
             if retries == nil { retries = [] }
             retries?.append(.init(id: id, hand: hand, reason: "target_" + (targetMatch?.reason ?? "uncertain")))
             diagnostics?.retryCauses["target_" + (targetMatch?.reason ?? "uncertain"), default: 0] += 1
-            feedbackDetail = "The punch was recognised, but aiming evidence was unclear. Retry the same hand; this is not a target miss."
+            feedbackDetail = String(localized: "Punch landed, but the camera lost your fist at full reach. Same hand again, and keep your fist in view.")
         }
         return true
     }
@@ -316,7 +343,8 @@ struct PadTrainingState: Codable, Sendable {
         let punch = hand == .lead ? "Jab" : "Cross"
         if reason.hasPrefix("candidate_") || reason.hasPrefix("judge_") {
             feedback = punch + " movement not recognised—retry"
-            feedbackDetail = "The movement could not be recognised reliably. Retry the same hand; this is not a missed response."
+            feedbackDetail = PadCoaching.message(forRetryReason: reason) ??
+                "The movement could not be recognised reliably. Retry the same hand; this is not a missed response."
         } else {
             feedback = punch + " tracking too uncertain—retry"
             feedbackDetail = PadTrackingGuidance.isProcessing(reason) ? PadTrackingGuidance.instruction(reason) :

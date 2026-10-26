@@ -47,6 +47,29 @@ final class RecognitionRuntimeTests: XCTestCase {
         print("KERNEL_REPLAY frames=\(inputs.count) events=\(events) p50Ms=\(timings[timings.count / 2]) p95Ms=\(timings[Int(Double(timings.count - 1) * 0.95)]) synthetic=true")
     }
 
+    /// Regression: upper-body (live pads) mode once rejected every frame with
+    /// invalidDimensions. Both worker modes must process consecutive frames.
+    func testWorkerProcessesFramesInUpperBodyAndFullBodyModes() throws {
+        let width = 128, height = 72
+        let yPlane = MoveNetYUVPlane(bytes: Data((0..<(width * height)).map { UInt8(($0 * 7) % 220 + 16) }), rowStride: width, pixelStride: 1)
+        let uvBytes = Data(repeating: 128, count: width * height / 2)
+        let uPlane = MoveNetYUVPlane(bytes: uvBytes, rowStride: width, pixelStride: 2)
+        let vPlane = MoveNetYUVPlane(bytes: Data(uvBytes.dropFirst()), rowStride: width, pixelStride: 2)
+        let mapping = try MoveNetUprightMapping(rawCrop: .init(x: 0, y: 0, width: width, height: height), clockwiseDegrees: 90)
+        let pixels = MoveNetYUVFrame(y: yPlane, u: uPlane, v: vPlane, mapping: mapping)
+        for upperBodyOnly in [true, false] {
+            let worker = MoveNetRecognitionWorker(model: .lightning, stance: .orthodox, upperBodyOnly: upperBodyOnly)
+            let base = ProcessInfo.processInfo.systemUptime * 1000
+            for index in 0..<6 {
+                let frame = MoveNetCapturedFrame(pixels: pixels, timestampMs: base + Double(index) * 42, callbackMs: base + Double(index) * 42,
+                                                 sequence: UInt64(index + 1), generation: 1, timestampSource: .captureHostClock)
+                let observation = try worker.process(frame)
+                XCTAssertEqual(observation.pose.count, 17)
+                XCTAssertNil(observation.recoveredError)
+            }
+        }
+    }
+
     #if !targetEnvironment(simulator)
     func testBoundedLiveCameraProcessingOnPhysicalIPhone() async throws {
         guard AVCaptureDevice.authorizationStatus(for: .video) == .authorized else { throw XCTSkip("Camera permission must already be granted") }
@@ -71,6 +94,39 @@ final class RecognitionRuntimeTests: XCTestCase {
         }
     }
     #endif
+
+    /// Real pixels through the review scanner: a boxer standing in guard and drifting sideways.
+    /// Generate the clip with ffmpeg at /tmp/boxqa/guard.mp4 (see BUILD_STATUS); skipped when absent.
+    func testClipScannerTracksABoxerInRealFootage() async throws {
+        let url = URL(fileURLWithPath: "/tmp/boxqa/guard.mp4")
+        try XCTSkipUnless(FileManager.default.fileExists(atPath: url.path), "No guard.mp4 fixture")
+        let scan = try await ClipScanner.scan(url: url, start: 0, end: 6, stance: .orthodox, purpose: .review) { _ in }
+        XCTAssertGreaterThan(scan.motion.trackedShare, 0.8)
+        XCTAssertTrue(scan.motion.punches.isEmpty, "A still guard must not produce punches: \(scan.motion.moves)")
+        XCTAssertGreaterThan(scan.motion.guardShare ?? 0, 0.8)
+        XCTAssertGreaterThan(scan.motion.footworkRate ?? 0, 0.05)
+        XCTAssertNotNil(scan.motion.stanceWidth)
+        XCTAssertGreaterThanOrEqual(scan.strips.count, 4)
+        for (i, strip) in scan.strips.enumerated() {
+            XCTAssertLessThan(strip.jpeg.count, 120_000)
+            try strip.jpeg.write(to: URL(fileURLWithPath: "/tmp/boxqa/strip-\(i).jpg"))
+        }
+        try scan.evidence.write(toFile: "/tmp/boxqa/evidence.txt", atomically: true, encoding: .utf8)
+    }
+
+    /// Opt-in live check of the review and style prompts against the configured model
+    /// (create /tmp/boxqa/live-ai). Costs one small vision request each.
+    func testLiveClipPromptsReturnValidReports() async throws {
+        try XCTSkipUnless(FileManager.default.fileExists(atPath: "/tmp/boxqa/live-ai") && QwenClient().isConfigured, "Live AI check not enabled")
+        let url = URL(fileURLWithPath: "/tmp/boxqa/guard.mp4")
+        let scan = try await ClipScanner.scan(url: url, start: 0, end: 6, stance: .orthodox, purpose: .review) { _ in }
+        let drills = ClipPrompts.drillMenu(ActivityCatalog.all)
+        let reviewPrompt = ClipPrompts.review(setting: .shadowboxing, focus: "my guard", profile: "Beginner boxer, orthodox stance, goal: General boxing.", history: "", evidence: scan.evidence, drills: drills)
+        let review = try await QwenClient().reviewClip(prompt: reviewPrompt, strips: scan.strips, start: 0, end: 6)
+        try JSONEncoder().encode(review).write(to: URL(fileURLWithPath: "/tmp/boxqa/review.json"))
+        let style = try await QwenClient().studyStyle(prompt: ClipPrompts.style(fighter: "Muhammad Ali", description: "", evidence: scan.evidence, drills: drills), strips: scan.strips, start: 0, end: 6)
+        try JSONEncoder().encode(style).write(to: URL(fileURLWithPath: "/tmp/boxqa/style.json"))
+    }
 
 }
 

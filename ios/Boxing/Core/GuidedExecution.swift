@@ -188,6 +188,8 @@ struct GuidedExecution: Codable, Sendable {
 struct GuidedSummary: Codable, Sendable {
     let execution: GuidedExecution
     var feedback: String?
+    /// How hard it felt: 1 too easy, 2 just right, 3 hard, 4 too hard.
+    var effort: Int? = nil
     var title: String { execution.session.title }
     var completed: Int { execution.results.indices.filter { execution.outcome(at: $0) == .completed }.count }
     var partial: Int { execution.results.indices.filter { execution.outcome(at: $0) == .partial }.count }

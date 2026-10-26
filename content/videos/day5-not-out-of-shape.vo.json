@@ -1,0 +1,44 @@
+{
+  "voice": "am_michael",
+  "speed": 1.12,
+  "end": 23.0,
+  "lines": [
+    {
+      "t": 0.0,
+      "text": "You're not out of shape."
+    },
+    {
+      "t": 1.25,
+      "text": "You're holding your breath."
+    },
+    {
+      "t": 2.75,
+      "text": "Every punch, your chest locks up."
+    },
+    {
+      "t": 4.9,
+      "text": "By round two, your arms feel like cement."
+    },
+    {
+      "t": 7.55,
+      "text": "Pros breathe out on every shot. Short and sharp, through the teeth."
+    },
+    {
+      "t": 11.35,
+      "text": "Jab, hiss. Cross, hiss. Hook, hiss.",
+      "speed": 0.85
+    },
+    {
+      "t": 14.3,
+      "text": "It keeps your core tight, and your tank full."
+    },
+    {
+      "t": 16.7,
+      "text": "Try it for three rounds. Then tell me you gassed."
+    },
+    {
+      "t": 19.7,
+      "text": "Do you hold your breath? Be honest."
+    }
+  ]
+}

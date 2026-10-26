@@ -1,0 +1,47 @@
+{
+  "voice": "am_michael",
+  "speed": 1.12,
+  "end": 29.5,
+  "lines": [
+    {
+      "t": 0.0,
+      "text": "Short fighters don't lose to tall fighters."
+    },
+    {
+      "t": 2.45,
+      "text": "They lose at long range."
+    },
+    {
+      "t": 4.4,
+      "text": "Out here, his jab lands. Yours falls short."
+    },
+    {
+      "t": 7.6,
+      "text": "Mike Tyson was five-ten. He knocked out forty-four men, most of them taller."
+    },
+    {
+      "t": 12.22,
+      "text": "So how do you get inside?"
+    },
+    {
+      "t": 14.0,
+      "text": "One. Don't walk in straight. Step in on an angle."
+    },
+    {
+      "t": 17.4,
+      "text": "Two. Move your head as you come in. Slip, then step."
+    },
+    {
+      "t": 20.6,
+      "text": "Three. Once you're in, stay there. His long arms can't reach you."
+    },
+    {
+      "t": 24.6,
+      "text": "Range isn't height. Range is a choice."
+    },
+    {
+      "t": 27.0,
+      "text": "How tall are you?"
+    }
+  ]
+}

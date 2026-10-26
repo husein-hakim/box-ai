@@ -1,0 +1,33 @@
+{
+  "id": "2B",
+  "caption": "be honest, which one are you? #boxing #boxingmotivation #boxingtips #boxingtraining #boxer",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "shirtless-boxer-back-ring.jpg",
+      "needs": "lone boxer in empty gym at night, from behind",
+      "text": "4 reasons you'll never get good at boxing...",
+      "sub": "(Swipe right)"
+    },
+    {
+      "image": "heavy-bag-dark-gym.jpg",
+      "needs": "row of heavy bags in dark gym",
+      "text": "You only hit the bag. Bags don't hit back. Add defense to every combo."
+    },
+    {
+      "image": "hoodie-walking-to-bag-bw.jpg",
+      "needs": "coach holding pads, gym",
+      "text": "You skip the basics. Pros still drill the jab every single session."
+    },
+    {
+      "image": "gymbag-gloves-floor.jpg",
+      "needs": "gym bag and gloves on floor, early morning",
+      "text": "You train when you feel like it. Three sessions a week beats one perfect week a month."
+    },
+    {
+      "image": "man-sitting-gym-back.jpg",
+      "needs": "phone on tripod filming in gym",
+      "text": "You never watch yourself. Film one round a week and find one mistake."
+    }
+  ]
+}

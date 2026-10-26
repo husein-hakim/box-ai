@@ -2,7 +2,7 @@ import SwiftUI
 
 struct GuidedPlayerContent: View {
     let controller: SessionController
-    let save: (String) -> Void
+    let save: (String, Int?) -> Void
     let discard: () -> Void
     let checkpoint: () -> Void
     let stance: BoxMaxxingJudge.Stance
@@ -10,7 +10,10 @@ struct GuidedPlayerContent: View {
     let stanceKnown: Bool
     @State private var actualReps = 0
     @State private var feedback = ""
+    @State private var effort: Int?
     @State private var selectedStance: BoxMaxxingJudge.Stance?
+    @State private var arena: SparringConfiguration?
+    @State private var drillSummary: SparringSummary?
     private var cameraStance: BoxMaxxingJudge.Stance? { selectedStance ?? controller.execution?.preferredCameraStance ?? (stanceKnown ? stance : nil) }
     var body: some View {
         if let execution = controller.execution {
@@ -52,11 +55,25 @@ struct GuidedPlayerContent: View {
                         }.frame(maxWidth: .infinity, alignment: .leading).boxPanel()
                     }
                     DevelopmentNote(text: "Guided sets use your check-ins. Camera sets record actual timed work and experimental observations separately. Finishing time does not certify successful punches or technique.")
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("How hard was it?").boxEyebrow()
+                        HStack(spacing: 6) {
+                            ForEach(Array(["Too easy", "Just right", "Hard", "Too hard"].enumerated()), id: \.offset) { i, label in
+                                let value = i + 1
+                                Button { effort = value; BoxHaptics.selection() } label: {
+                                    Text(LocalizedStringResource(stringLiteral: label)).font(.caption.weight(.semibold)).frame(maxWidth: .infinity).padding(.vertical, 10)
+                                        .foregroundStyle(effort == value ? .white : BoxStyle.ink)
+                                        .background(effort == value ? AnyShapeStyle(BoxStyle.redGradient) : AnyShapeStyle(BoxStyle.surfaceRaised), in: .rect(cornerRadius: 12))
+                                }.buttonStyle(BoxPressStyle(scale: 0.95))
+                            }
+                        }
+                        Text("Your next week adapts to this.").font(.caption2).foregroundStyle(BoxStyle.muted)
+                    }
                     TextField("How did it feel? Feedback for your next plan…", text: $feedback, axis: .vertical)
                         .lineLimit(3...6).padding(16)
                         .background(BoxStyle.surface, in: .rect(cornerRadius: 18, style: .continuous))
                         .overlay { RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(BoxStyle.border) }
-                    PrimaryButton(title: "Save to Progress", symbol: "checkmark") { save(feedback) }
+                    PrimaryButton(title: "Save to Progress", symbol: "checkmark") { save(feedback, effort) }
                     Button("Discard session", role: .destructive, action: discard)
                         .font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 44)
                 } else if let item = execution.current, let activity = ActivityCatalog.find(item.activityID) {
@@ -93,7 +110,13 @@ struct GuidedPlayerContent: View {
                             }
                             ActivityInstructions(activity: activity, mode: execution.currentMode)
                             PrimaryButton(title: execution.currentMode == .camera ? "Set up camera for this set" : "Start this set",
-                                          symbol: execution.currentMode == .camera ? "camera.fill" : "play.fill") { controller.startActivity(stance: cameraStance ?? stance, level: level); checkpoint() }
+                                          symbol: execution.currentMode == .camera ? "camera.fill" : "play.fill") {
+                                controller.startActivity(stance: cameraStance ?? stance, level: level); checkpoint()
+                                // Rhythm drills open the sparring arena; the guided timer keeps the set's work.
+                                if execution.currentMode == .camera, let config = item.sparringConfiguration(stance: cameraStance ?? stance) {
+                                    drillSummary = nil; arena = config
+                                }
+                            }
                                 .disabled(execution.currentMode == .camera && cameraStance == nil)
                         case .work, .rest:
                             let resting = execution.phase == .rest
@@ -129,6 +152,12 @@ struct GuidedPlayerContent: View {
                                 if item.reps > 0 {
                                     RepCounter(value: $actualReps, maximum: item.reps, label: activity.repsPerSide ? "Reps on each side" : "Reps completed")
                                 }
+                                if let drillSummary, drillSummary.attempts > 0 {
+                                    HStack(spacing: 8) {
+                                        BoxChip(text: "\(drillSummary.hits)/\(drillSummary.attempts) moves", symbol: "camera.viewfinder", color: BoxStyle.accent)
+                                        BoxChip(text: "\(Int(drillSummary.accuracy * 100))% · best streak \(drillSummary.maxStreak)", color: BoxStyle.strength)
+                                    }
+                                }
                             }.boxPanel(padding: 18)
                             PrimaryButton(title: "Confirm set", symbol: "checkmark") { controller.confirmActivity(reps: item.reps > 0 ? actualReps : nil); BoxHaptics.success(); checkpoint() }
                         default: EmptyView()
@@ -141,6 +170,12 @@ struct GuidedPlayerContent: View {
                 }
                 if let notice = controller.audioNotice { BoxInlineNotice(text: notice) }
             }.foregroundStyle(BoxStyle.ink)
+                .fullScreenCover(item: $arena) { config in
+                    SparringArenaView(store: nil, configuration: config) { summary in
+                        drillSummary = summary
+                        controller.finishActivitySet(); checkpoint()
+                    }
+                }
                 .onChange(of: execution.phase) { _, phase in
                     if phase == .confirmation { actualReps = 0 }
                     checkpoint()

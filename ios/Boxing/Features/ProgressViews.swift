@@ -29,6 +29,7 @@ struct ProgressViewScreen: View {
     @Binding var sheet: AppSheet?
     @State private var log: ProgressLog = .practices
     var body: some View {
+        let progression = store.progression
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .top) {
@@ -36,6 +37,7 @@ struct ProgressViewScreen: View {
                     GlassIconButton(symbol: "person.fill", label: "Profile and settings") { sheet = .settings }
                         .foregroundStyle(BoxStyle.ink)
                 }.boxEntrance()
+                RankCard(state: progression, unlocks: store.unlocks).boxEntrance(1)
                 WeeklyWorkChart(history: store.history).boxEntrance(1)
                 ProgressMetrics(practices: store.history.count, activeDays: store.activeDays(), streak: store.activityStreak()).boxEntrance(2)
                 BoxSegmented(options: ProgressLog.allCases, selection: $log, title: { $0 == .practices ? "Practices" : "Workouts" })
@@ -74,6 +76,8 @@ struct ProgressViewScreen: View {
                 }
                 .transition(.opacity)
                 .boxEntrance(4)
+                AwardsSection(state: progression).padding(.top, 16).boxEntrance(5)
+                RecentXPSection(state: progression).padding(.top, 16).boxEntrance(5)
             }
             .boxPage()
             .animation(.spring(response: 0.4, dampingFraction: 0.85), value: log)
@@ -149,12 +153,13 @@ private struct ProgressMetrics: View {
 private struct PracticeHistoryRow: View {
     let record: SessionRecord
     var body: some View {
-        let title = record.pad?.configuration.title ?? record.guided?.title ?? String(localized: record.focus.title)
+        let title = record.sparring.map { String(localized: "Sparring · \($0.configuration.mode == .check ? String(localized: "Detection check") : $0.configuration.difficulty.title)") }
+            ?? record.pad?.configuration.title ?? record.guided?.title ?? String(localized: record.focus.title)
         let date = record.date.formatted(.dateTime.month(.abbreviated).day())
-        BoxRow(symbol: record.pad != nil ? "camera.viewfinder" : record.guided != nil ? "list.bullet.rectangle" : "waveform",
+        BoxRow(symbol: record.sparring != nil ? "flame.fill" : record.pad != nil ? "camera.viewfinder" : record.guided != nil ? "list.bullet.rectangle" : "waveform",
                color: record.finished ? BoxStyle.accent : BoxStyle.muted,
                title: title,
-               subtitle: "\(date) · \(record.finished ? String(localized: "Completed") : String(localized: "Partial practice"))") {
+               subtitle: record.sparring.map { "\(date) · \($0.score) pts · \(Int($0.accuracy * 100))% accuracy" } ?? "\(date) · \(record.finished ? String(localized: "Completed") : String(localized: "Partial practice"))") {
             Text(Duration.seconds(Int(record.workSeconds)).formatted(.time(pattern: .minuteSecond))).boxNumber(17).foregroundStyle(BoxStyle.ink)
         }
     }
@@ -176,6 +181,15 @@ private struct PracticeHistoryDetail: View {
                         recapStat(record.finished ? "✓" : "–", record.finished ? "Completed" : "Partial")
                     }.fixedSize(horizontal: false, vertical: true).padding(.top, 16)
                 }.boxHero().boxEntrance()
+                if let debrief = record.debrief {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Coach's debrief", systemImage: "sparkles").boxEyebrow(BoxStyle.coach)
+                        Text(debrief.headline).font(.headline)
+                        ForEach(debrief.good) { Label("\($0.title): \($0.detail)", systemImage: "checkmark.circle.fill").font(.caption) }
+                        ForEach(debrief.workOn) { Label("\($0.title): \($0.detail)", systemImage: "scope").font(.caption) }
+                        Text(debrief.next).font(.caption).foregroundStyle(BoxStyle.muted)
+                    }.frame(maxWidth: .infinity, alignment: .leading).boxPanel(padding: 14, tint: BoxStyle.coach)
+                }
                 if let pad = record.pad {
                     PadResultSummary(state: pad)
                 } else if let summary = record.guided {
@@ -240,6 +254,18 @@ struct SettingsSheet: View {
     @State private var cameraDiagnostics = false
     @State private var export: RecordsDocument?
     @State private var exporting = false
+    @State private var syncOn = LocalDatabase.syncEnabled
+    private var syncStatus: String {
+        if syncOn != (LocalDatabase.syncState != .off) {
+            return syncOn ? String(localized: "Turns on the next time you open BOX.") : String(localized: "Turns off the next time you open BOX. Data on this iPhone stays.")
+        }
+        switch LocalDatabase.syncState {
+        case .on: return String(localized: "On. Changes sync automatically.")
+        case .off: return String(localized: "Off. Your data is only on this iPhone.")
+        case .signedOut: return String(localized: "Sign in to iCloud in Settings to sync. Your data is safe on this iPhone.")
+        case .unavailable(let reason): return String(localized: "iCloud is unavailable right now (\(reason)). Your data is safe on this iPhone.")
+        }
+    }
     var body: some View {
         Form {
             Section {
@@ -258,6 +284,15 @@ struct SettingsSheet: View {
                 .listRowInsets(EdgeInsets())
                 .accessibilityElement(children: .combine)
             }.listRowBackground(Color.clear)
+
+            Section {
+                Toggle(isOn: Binding(get: { syncOn }, set: { syncOn = $0; LocalDatabase.syncEnabled = $0 })) {
+                    Label("iCloud sync", systemImage: "icloud.fill")
+                }
+                Text(syncStatus).font(.caption).foregroundStyle(BoxStyle.muted)
+            } header: { Text("Backup & sync") } footer: {
+                Text("Training, plans, meals, reviews and XP sync through your private iCloud. Video clips stay on the iPhone that recorded them.")
+            }
 
             Section("Training") {
                 Button("Edit training profile") { editingProfile = true }

@@ -1,0 +1,37 @@
+{
+  "id": "1A",
+  "caption": "save this before your next session \ud83e\udd4a #boxing #boxingtraining #boxingtips #cardio #fightcamp",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "boxer-head-on-bag-exhausted.jpg",
+      "needs": "dark gym at night, boxer sitting on bench head down, exhausted",
+      "text": "Here's exactly why you gas out in the first round...",
+      "sub": "(Swipe right)",
+      "brightness": 1.15
+    },
+    {
+      "image": "punching-bag-usi-dark.jpg",
+      "needs": "boxer mid-punch on heavy bag, low light",
+      "text": "You hold your breath when you punch. Breathe out sharp on every shot.",
+      "brightness": 1.0
+    },
+    {
+      "image": "hoodie-corner-ropes.jpg",
+      "needs": "boxer from behind in ring corner, shoulders relaxed",
+      "text": "You stay tense between exchanges. Loose shoulders save more energy than any cardio."
+    },
+    {
+      "image": "punching-bag-gym-wide.jpg",
+      "needs": "close-up red gloves, moody",
+      "text": "You throw every punch at 100%. Touch jabs set up the hard ones.",
+      "y": 0.66
+    },
+    {
+      "image": "sprinter-motion-blur-night.jpg",
+      "needs": "runner at dawn, fog, hoodie, from behind",
+      "text": "Your roadwork is all slow miles. Boxing is 3 hard minutes, 1 minute rest. Train that.",
+      "brightness": 0.95
+    }
+  ]
+}

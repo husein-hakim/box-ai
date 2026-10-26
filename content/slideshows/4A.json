@@ -1,0 +1,33 @@
+{
+  "id": "4A",
+  "caption": "your feet are slowing you down #boxing #footwork #boxingtips #jumprope #boxingtraining",
+  "sound": "slowed / moody trending sound",
+  "slides": [
+    {
+      "image": "hoodie-jumprope-gym-bw.jpg",
+      "needs": "boxer feet on ring canvas, low angle, ring lights",
+      "text": "Here's exactly why your footwork feels slow...",
+      "sub": "(Swipe right)"
+    },
+    {
+      "image": "jumprope-snow-field.jpg",
+      "needs": "jump rope mid-air, low angle",
+      "text": "You're flat-footed. Stay on the balls of your feet with a light bounce."
+    },
+    {
+      "image": "hoodie-walking-wet-track.jpg",
+      "needs": "boxer stance from behind",
+      "text": "Your stance is too wide. Wide is stable, but slow to move."
+    },
+    {
+      "image": "runner-fog-forest-road.jpg",
+      "needs": "feet stepping, motion blur",
+      "text": "You move the wrong foot first. Going forward, front foot leads. Going back, back foot leads."
+    },
+    {
+      "image": "jumprope-floor.jpg",
+      "needs": "jump rope in dark gym, single light",
+      "text": "You skip rope like it's cardio. Use it for rhythm: switch feet, change speed."
+    }
+  ]
+}

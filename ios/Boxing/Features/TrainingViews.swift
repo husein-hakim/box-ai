@@ -1,12 +1,11 @@
 import SwiftUI
 
-private enum TrainDiscipline: String, CaseIterable { case boxing, strength }
-
 struct TrainView: View {
     let store: AppStore
     @Binding var sheet: AppSheet?
     @Binding var selectedTab: AppTab
-    @State private var discipline: TrainDiscipline = .boxing
+    @State private var building = false
+    @State private var buildingNext = false
     @Environment(\.dynamicTypeSize) private var typeSize
     private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: 10), count: typeSize.isAccessibilitySize ? 1 : 2) }
 
@@ -14,76 +13,104 @@ struct TrainView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .top) {
-                    BoxPageHeader(title: "Train", subtitle: "Pick a practice. Put in the rounds.")
+                    BoxPageHeader(title: "Train", subtitle: "Your program first. Everything else when you want it.")
                     GlassPillButton(title: "History", symbol: "clock.arrow.circlepath") { selectedTab = .progress }
                 }.boxEntrance()
-                BoxSegmented(options: TrainDiscipline.allCases, selection: $discipline,
-                             title: { $0 == .boxing ? "Boxing" : "Strength" },
-                             symbol: { $0 == .boxing ? "figure.boxing" : "dumbbell.fill" })
-                    .boxEntrance(1)
-                Group {
-                    if discipline == .boxing { boxing } else { strength }
-                }
-                .transition(.opacity.combined(with: .offset(y: 8)))
+
+                ProgramHero(store: store, sheet: $sheet, build: { building = true }, buildNext: { buildingNext = true }).boxEntrance(1)
+
+                BoxSectionHeader(title: "Fight") { Text("Camera") }.padding(.top, 10).boxEntrance(2)
+                LazyVGrid(columns: columns, spacing: 10) {
+                    NavigationLink { SparringSetupView(store: store) } label: {
+                        let best = SparringConfiguration.Difficulty.allCases.map { UserDefaults.standard.integer(forKey: SparringSession.highScoreKey($0)) }.max() ?? 0
+                        BoxActionTile(title: "Sparring", subtitle: best > 0 ? "Best \(best) · every move, fast" : "Every move, fast, scored", symbol: "flame.fill", color: BoxStyle.strength)
+                    }.buttonStyle(BoxPressStyle())
+                    NavigationLink { PadTrainingSetupView(store: store, activityID: nil) } label: {
+                        BoxActionTile(title: "Live pads", subtitle: "Aim jab and cross, one at a time", symbol: "camera.viewfinder")
+                    }.buttonStyle(BoxPressStyle())
+                }.boxEntrance(3)
+
+                BoxSectionHeader(title: "Practise").padding(.top, 10).boxEntrance(4)
+                LazyVGrid(columns: columns, spacing: 10) {
+                    NavigationLink { DrillLibraryView(store: store) } label: {
+                        BoxActionTile(title: "Drills", subtitle: "Punches, defense, combos, footwork", symbol: "square.grid.2x2.fill")
+                    }.buttonStyle(BoxPressStyle())
+                    NavigationLink { WorkoutLibraryView(store: store) } label: {
+                        BoxActionTile(title: "Strength & conditioning", subtitle: "Weights, core, skipping, runs", symbol: "dumbbell.fill", color: BoxStyle.conditioning)
+                    }.buttonStyle(BoxPressStyle())
+                    Button { sheet = .builder } label: {
+                        BoxActionTile(title: "Guided rounds", subtitle: "Bell, rounds & spoken cues", symbol: "timer", color: BoxStyle.timer)
+                    }.buttonStyle(BoxPressStyle())
+                    Button { sheet = .coach } label: {
+                        BoxActionTile(title: "Coach", subtitle: "Questions & training advice", symbol: "bubble.left.and.text.bubble.right.fill", color: BoxStyle.coach)
+                    }.buttonStyle(BoxPressStyle())
+                }.boxEntrance(5)
             }
             .boxPage()
-            .animation(.spring(response: 0.4, dampingFraction: 0.85), value: discipline)
         }
         .boxScreen().foregroundStyle(BoxStyle.ink)
         .navigationTitle("Train").navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
+        .sheet(isPresented: $building) { NavigationStack { ProgramBuilderView(store: store) } }
+        .sheet(isPresented: $buildingNext) { NavigationStack { ProgramBuilderView(store: store, nextWeek: true) } }
     }
+}
 
-    @ViewBuilder private var boxing: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            CameraTrainingCard(store: store).boxEntrance(2)
-            NavigationLink { WeeklyPlanView(store: store, sheet: $sheet) } label: {
-                TrainingPlanRow(store: store)
-            }.buttonStyle(BoxPressStyle()).boxEntrance(3)
-            BoxSectionHeader(title: "Training tools").padding(.top, 14)
-            LazyVGrid(columns: columns, spacing: 10) {
-                Button { sheet = .builder } label: {
-                    BoxActionTile(title: "Guided rounds", subtitle: "Bell, rounds & spoken cues", symbol: "timer", color: BoxStyle.timer)
-                }.buttonStyle(BoxPressStyle())
-                NavigationLink { DrillLibraryView(store: store) } label: {
-                    BoxActionTile(title: "Drill library", subtitle: "Punches, movement & defense", symbol: "square.grid.2x2.fill")
-                }.buttonStyle(BoxPressStyle())
-                NavigationLink { WorkoutLibraryView(store: store) } label: {
-                    BoxActionTile(title: "Workouts", subtitle: "Strength, core & conditioning", symbol: "dumbbell.fill", color: BoxStyle.strength)
-                }.buttonStyle(BoxPressStyle())
-                Button { sheet = .coach } label: {
-                    BoxActionTile(title: "Coach", subtitle: "Questions & training advice", symbol: "bubble.left.and.text.bubble.right.fill", color: BoxStyle.coach)
-                }.buttonStyle(BoxPressStyle())
-            }.boxEntrance(4)
-        }
-    }
-
-    @ViewBuilder private var strength: some View {
-        VStack(alignment: .leading, spacing: 10) {
+/// The one red hero on Train: the next session of the programme, or the call to build one.
+private struct ProgramHero: View {
+    let store: AppStore
+    @Binding var sheet: AppSheet?
+    let build: () -> Void
+    var buildNext: () -> Void = {}
+    var body: some View {
+        let today = Calendar.current.startOfDay(for: .now)
+        let week = store.plan.filter { $0.date >= today }.sorted { $0.date < $1.date }
+        let next = week.first { !store.assignmentIsComplete($0) && $0.session?.activities.isEmpty == false }
+        if let next, let session = next.session {
             VStack(alignment: .leading, spacing: 0) {
-                Label("Strength & conditioning", systemImage: "dumbbell.fill").boxEyebrow(.white.opacity(0.85))
-                Text("Build the\nengine.").boxDisplay(38, relativeTo: .title).padding(.top, 10)
-                Text("Guided workouts with timed sets, rest and check-ins.").font(.subheadline).foregroundStyle(.white.opacity(0.82))
-                    .padding(.top, 6).fixedSize(horizontal: false, vertical: true)
-                NavigationLink { WorkoutLibraryView(store: store) } label: {
-                    Label("Choose a workout", systemImage: "play.fill")
-                }.buttonStyle(BoxHeroButtonStyle()).padding(.top, 18)
+                HStack {
+                    Label("Your program · next session", systemImage: "calendar").boxEyebrow(.white.opacity(0.85))
+                    Spacer()
+                    Text(Calendar.current.isDateInToday(next.date) ? String(localized: "Today") : Calendar.current.isDateInTomorrow(next.date) ? String(localized: "Tomorrow") : next.date.formatted(.dateTime.weekday(.wide)))
+                        .font(.caption.weight(.bold)).foregroundStyle(.white)
+                }
+                Text(session.title).boxDisplay(36, relativeTo: .title).padding(.top, 10).fixedSize(horizontal: false, vertical: true)
+                let mix = ProgramMix(sessions: [session])
+                HStack(spacing: 6) {
+                    BoxValueChip(text: Duration.seconds(session.estimatedSeconds).formatted(.time(pattern: .minuteSecond)) + " min", onHero: true)
+                    ForEach(mix.parts.filter { $0.label != String(localized: "Mobility") }.prefix(3), id: \.label) { part in
+                        BoxValueChip(text: part.label, onHero: true)
+                    }
+                }.padding(.top, 12)
+                HStack(spacing: 4) {
+                    ForEach(week.prefix(7), id: \.id) { item in
+                        let done = store.assignmentIsComplete(item)
+                        let rest = item.session?.activities.isEmpty != false
+                        Capsule().fill(done ? .white : rest ? .white.opacity(0.18) : .white.opacity(0.45))
+                            .frame(height: 5)
+                    }
+                }.padding(.top, 14).accessibilityHidden(true)
+                HStack(spacing: 8) {
+                    Button { store.startAssignment(next) } label: { Label("Start", systemImage: "play.fill").frame(maxWidth: .infinity) }
+                        .buttonStyle(BoxHeroButtonStyle())
+                    NavigationLink { WeeklyPlanView(store: store, sheet: $sheet) } label: { Text("Full week") }
+                        .buttonStyle(BoxHeroButtonStyle(kind: .ghost))
+                }.padding(.top, 16)
             }.boxHero()
-            BoxSectionHeader(title: "Strength tools").padding(.top, 14)
-            LazyVGrid(columns: columns, spacing: 10) {
-                NavigationLink { ActivityLibraryView(store: store) } label: {
-                    BoxActionTile(title: "Exercise library", subtitle: "Strength, core & mobility", symbol: "figure.strengthtraining.functional", color: BoxStyle.strength)
-                }.buttonStyle(BoxPressStyle())
-                NavigationLink { WeeklyPlanView(store: store, sheet: $sheet) } label: {
-                    BoxActionTile(title: "Your plan", subtitle: "Sessions & recovery days", symbol: "calendar", color: BoxStyle.conditioning)
-                }.buttonStyle(BoxPressStyle())
-                Button { sheet = .coach } label: {
-                    BoxActionTile(title: "Coach", subtitle: "Ask about a workout", symbol: "bubble.left.and.text.bubble.right.fill", color: BoxStyle.coach)
-                }.buttonStyle(BoxPressStyle())
-                Button { selectedTab = .progress } label: {
-                    BoxActionTile(title: "Logged work", subtitle: "Workouts in Progress", symbol: "chart.bar.fill", color: BoxStyle.timer)
-                }.buttonStyle(BoxPressStyle())
-            }
+        } else {
+            VStack(alignment: .leading, spacing: 0) {
+                Label("Your program", systemImage: "sparkles").boxEyebrow(.white.opacity(0.85))
+                let due = store.nextWeekDue
+                Text(due ? "Week done.\nBuild the next." : "One program.\nEverything in it.").boxDisplay(38, relativeTo: .title).padding(.top, 10)
+                Text(due ? "Your next week adapts to what you finished, how hard it felt, your camera accuracy and your review fixes."
+                         : "Drills, camera training, sparring, footwork, conditioning, strength and nutrition, planned together around your week.")
+                    .font(.subheadline).foregroundStyle(.white.opacity(0.85)).padding(.top, 6).fixedSize(horizontal: false, vertical: true)
+                Button(action: due ? buildNext : build) { Label(due ? "Build next week" : "Build my program", systemImage: due ? "arrow.triangle.2.circlepath" : "sparkles").frame(maxWidth: .infinity) }
+                    .buttonStyle(BoxHeroButtonStyle()).padding(.top, 18)
+                if due {
+                    Button(action: build) { Text("Start over with new details") }.buttonStyle(BoxHeroButtonStyle(kind: .ghost)).padding(.top, 8)
+                }
+            }.boxHero()
         }
     }
 }
@@ -107,30 +134,6 @@ private struct TrainingPlanRow: View {
             Spacer(minLength: 0)
             Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(BoxStyle.dim)
         }.foregroundStyle(BoxStyle.ink).boxPanel(padding: 14)
-    }
-}
-
-private struct CameraTrainingCard: View {
-    let store: AppStore
-    var body: some View {
-        let last = store.history.first { $0.pad != nil }
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Label("Camera · Live pads", systemImage: "camera.viewfinder").boxEyebrow(.white.opacity(0.85))
-                    Text("See it.\nSend it.").boxDisplay(38, relativeTo: .title).padding(.top, 10)
-                    Text("React to jab and cross cues. Reset, then go again.").font(.subheadline).foregroundStyle(.white.opacity(0.82))
-                        .padding(.top, 6).fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer(minLength: 8)
-                BoxChip(text: "Beta", onHero: true)
-            }
-            NavigationLink { PadTrainingSetupView(store: store, activityID: nil) } label: {
-                Label(last == nil ? "Start camera practice" : "Go again", systemImage: "play.fill")
-            }.buttonStyle(BoxHeroButtonStyle()).padding(.top, 18)
-            Text(last.map { String(localized: "Last session · \($0.date.formatted(.dateTime.month(.abbreviated).day()))") } ?? String(localized: "Experimental recognition · Noncontact"))
-                .font(.caption2).foregroundStyle(.white.opacity(0.7)).padding(.top, 10)
-        }.boxHero()
     }
 }
 

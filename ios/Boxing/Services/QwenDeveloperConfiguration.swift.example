@@ -1,8 +1,20 @@
-// Copy to QwenDeveloperConfiguration.swift for local development.
-// Keep provider credentials out of version control.
+// Copy to QwenDeveloperConfiguration.swift. Keep it out of version control.
 enum QwenDeveloperConfiguration {
+    /// Server gateway, e.g. "https://your-proxy.vercel.app/api/qwen/proxy".
+    /// When set, every build uses it and no provider key is needed in the app.
+    static let proxyURL = ""
+    #if DEBUG
+    /// Local development fallback only. Never compiled into release builds.
     static let apiKey = ""
+    #else
+    static let apiKey = ""
+    #endif
     static let baseURL = ""
-    static let textModel = ""
-    static let visionModel = ""
+    /// Gemini relay (text-only route). Used for text generation when `textProvider` is "gemini".
+    static let geminiProxyURL = ""
+    static let geminiModel = "gemini-3.5-flash"
+    /// "gemini" or "qwen". Vision (food photos, clip review) always uses Qwen: the Gemini route is text-only.
+    static let textProvider = "gemini"
+    static let textModel = "qwen3.8-flash"
+    static let visionModel = "qwen3.8-flash"
 }

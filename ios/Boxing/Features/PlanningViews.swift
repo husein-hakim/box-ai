@@ -97,7 +97,7 @@ struct WeeklyPlanView: View {
                 } label: { Image(systemName: "slider.horizontal.3") }.accessibilityLabel("Plan preferences")
             }
         }
-        .sheet(isPresented: $showingAI) { NavigationStack { PlanProposalView(store: store) } }
+        .sheet(isPresented: $showingAI) { NavigationStack { ProgramBuilderView(store: store) } }
     }
 }
 
